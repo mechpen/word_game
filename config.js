@@ -1,7 +1,7 @@
 // Game configuration
 const CONFIG = {
-  // Word limits
-  MAX_WORDS: 200,
+  // Word limits (80 max due to Gemini API output token limits)
+  MAX_WORDS: 80,
   MIN_WORDS: 4,
 
   // Quiz settings
