@@ -4,433 +4,43 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Word Memorization Quiz</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .container {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      max-width: 600px;
-      width: 100%;
-      overflow: hidden;
-    }
-
-    .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 24px;
-      text-align: center;
-    }
-
-    .header h1 {
-      font-size: 1.8rem;
-      margin-bottom: 8px;
-    }
-
-    .score-display {
-      font-size: 1.1rem;
-      opacity: 0.9;
-    }
-
-    .progress-bar {
-      height: 4px;
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: #4ade80;
-      transition: width 0.3s ease;
-    }
-
-    .content {
-      padding: 32px;
-    }
-
-    .word-display {
-      text-align: center;
-      margin-bottom: 28px;
-    }
-
-    .word-label {
-      font-size: 0.9rem;
-      color: #666;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-
-    .word {
-      font-size: 2.2rem;
-      font-weight: 700;
-      color: #1a1a2e;
-    }
-
-    .options {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .option {
-      padding: 16px 20px;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 1rem;
-      text-align: left;
-      background: #fff;
-      line-height: 1.5;
-    }
-
-    .option:hover:not(.disabled), .option.highlighted:not(.disabled) {
-      border-color: #667eea;
-      background: #f8f7ff;
-      transform: translateX(4px);
-    }
-
-    .option.correct {
-      border-color: #22c55e;
-      background: #dcfce7;
-    }
-
-    .option.incorrect {
-      border-color: #ef4444;
-      background: #fee2e2;
-    }
-
-    .option.disabled {
-      cursor: default;
-    }
-
-    .option-number {
-      display: inline-block;
-      width: 28px;
-      height: 28px;
-      line-height: 28px;
-      text-align: center;
-      background: #667eea;
-      color: white;
-      border-radius: 50%;
-      margin-right: 12px;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    .feedback {
-      margin-top: 24px;
-      padding: 16px;
-      border-radius: 12px;
-      text-align: center;
-      display: none;
-    }
-
-    .feedback.show {
-      display: block;
-    }
-
-    .feedback.correct {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .feedback.incorrect {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .next-btn {
-      display: none;
-      width: 100%;
-      margin-top: 20px;
-      padding: 16px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .next-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-    }
-
-    .next-btn.show {
-      display: block;
-    }
-
-    .start-screen, .end-screen {
-      text-align: center;
-      padding: 40px 32px;
-    }
-
-    .start-screen h2, .end-screen h2 {
-      font-size: 1.6rem;
-      margin-bottom: 16px;
-      color: #1a1a2e;
-    }
-
-    .start-screen p, .end-screen p {
-      color: #666;
-      margin-bottom: 24px;
-      line-height: 1.6;
-    }
-
-    .end-screen .final-score {
-      font-size: 3rem;
-      font-weight: 700;
-      color: #667eea;
-      margin: 20px 0;
-    }
-
-    .start-btn, .restart-btn {
-      padding: 16px 40px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .start-btn:hover, .restart-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-    }
-
-    .quiz-screen {
-      display: none;
-    }
-
-    .word-count {
-      font-size: 0.9rem;
-      color: #888;
-      margin-top: 8px;
-    }
-
-    .stats-display {
-      margin: 16px 0;
-      font-size: 0.85rem;
-    }
-
-    .stat-option {
-      display: inline-block;
-      padding: 6px 12px;
-      margin: 4px;
-      border-radius: 20px;
-      cursor: pointer;
-      background: #e2e8f0;
-      color: #475569;
-      transition: all 0.2s;
-      font-size: 0.85rem;
-    }
-
-    .stat-option:hover {
-      background: #cbd5e1;
-    }
-
-    .stat-option.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      font-weight: 600;
-    }
-
-    .reset-btn {
-      display: block;
-      margin: 16px auto 0;
-      padding: 10px 24px;
-      font-size: 0.9rem;
-      background: transparent;
-      color: #666;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .reset-btn:hover {
-      background: #f5f5f5;
-      border-color: #999;
-    }
-
-    .quiz-options {
-      margin: 16px 0;
-    }
-
-    .quiz-options label {
-      color: #666;
-      margin-right: 8px;
-    }
-
-    .quiz-options input {
-      padding: 8px 12px;
-      font-size: 1rem;
-      border: 2px solid #e2e8f0;
-      border-radius: 8px;
-      background: #fff;
-      width: 70px;
-      text-align: center;
-    }
-
-    .quiz-options input:focus {
-      outline: none;
-      border-color: #667eea;
-    }
-
-    .hint-btn {
-      display: block;
-      width: 100%;
-      margin-top: 20px;
-      padding: 12px;
-      font-size: 0.95rem;
-      background: #f0f9ff;
-      color: #0369a1;
-      border: 2px solid #bae6fd;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .hint-btn:hover {
-      background: #e0f2fe;
-      border-color: #7dd3fc;
-    }
-
-    .hint-btn.hidden {
-      display: none;
-    }
-
-    .hint-btn.disabled {
-      background: #f1f5f9;
-      color: #94a3b8;
-      border-color: #e2e8f0;
-      cursor: not-allowed;
-    }
-
-    .hint-display {
-      display: none;
-      margin-top: 16px;
-      padding: 16px;
-      background: #fefce8;
-      border: 2px solid #fde047;
-      border-radius: 10px;
-      font-style: italic;
-      color: #713f12;
-      line-height: 1.5;
-    }
-
-    .hint-display.show {
-      display: block;
-    }
-
-    .word-details {
-      margin-top: 8px;
-      text-align: left;
-      font-size: 0.95rem;
-      line-height: 1.6;
-      padding: 16px;
-      border-radius: 10px;
-      border: 2px solid;
-    }
-
-    .word-details.correct {
-      background: #dcfce7;
-      border-color: #22c55e;
-    }
-
-    .word-details.incorrect {
-      background: #fee2e2;
-      border-color: #ef4444;
-    }
-
-    .word-details .detail-row {
-      margin-bottom: 8px;
-    }
-
-    .word-details .detail-row:last-child {
-      margin-bottom: 0;
-    }
-
-    .word-details .detail-label {
-      font-weight: 600;
-    }
-
-    .word-details.correct .detail-label {
-      color: #166534;
-    }
-
-    .word-details.incorrect .detail-label {
-      color: #991b1b;
-    }
-
-    .word-details .detail-example {
-      font-style: italic;
-    }
-
-    .hint-display .hint-label {
-      font-weight: 600;
-      font-style: normal;
-      margin-bottom: 6px;
-      color: #a16207;
-    }
-
-    .highlight-word {
-      background: linear-gradient(120deg, #fde68a 0%, #fcd34d 100%);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-weight: 600;
-      font-style: normal;
-      color: #92400e;
-    }
-
-    @media (max-width: 480px) {
-      .word {
-        font-size: 1.8rem;
-      }
-      .option {
-        padding: 14px 16px;
-        font-size: 0.95rem;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="container">
     <div class="header">
       <h1>Word Quiz</h1>
-      <div class="score-display">Score: <span id="score">0</span> / <span id="total">0</span></div>
-      <div class="progress-bar">
+      <div class="score-display" id="score-display" style="display: none;">Score: <span id="score">0</span> / <span id="total">0</span></div>
+      <div class="progress-bar" id="progress-bar" style="display: none;">
         <div class="progress-fill" id="progress"></div>
       </div>
     </div>
 
-    <div class="start-screen" id="start-screen">
+    <div class="input-screen" id="input-screen">
+      <h2>Enter Your Words</h2>
+      <p>Enter words (one per line, max 200 words). We'll generate definitions, synonyms, and antonyms automatically.</p>
+      <textarea id="word-input" placeholder="Enter one word per line..." rows="10"></textarea>
+      <p class="input-hint" id="input-hint"></p>
+      <button class="start-btn" onclick="submitWords()">Generate Quiz</button>
+      <button class="reset-btn" onclick="loadSavedWords()">Load Previous Words</button>
+    </div>
+
+    <div class="loading-screen" id="loading-screen" style="display: none;">
+      <h2>Generating Word Data...</h2>
+      <p>Please wait while we fetch definitions, synonyms, and antonyms.</p>
+      <div class="loading-spinner"></div>
+      <p id="loading-status">Connecting to API...</p>
+    </div>
+
+    <div class="start-screen" id="start-screen" style="display: none;">
       <h2>Ready to test your vocabulary?</h2>
-      <p>You'll be shown a word and four possible definitions. Pick the correct one!</p>
-      <p>Words you miss will appear more often. Words you know will fade away.</p>
-      <p class="word-count" id="word-count"></p>
+      <p>Pick the correct definition for each word.</p>
+      <p>Missed words appear more often. Learned words fade away.</p>
+      <div class="shortcuts-info">
+        <div class="shortcut-item"><span class="shortcut-key">↑↓</span> navigate</div>
+        <div class="shortcut-item"><span class="shortcut-key">Enter</span>/<span class="shortcut-key">Space</span> confirm</div>
+        <div class="shortcut-item"><span class="shortcut-key">Shift</span> hint</div>
+      </div>
       <div class="stats-display" id="stats-display"></div>
       <div class="quiz-options">
         <label for="num-questions">Questions per quiz:</label>
@@ -438,9 +48,10 @@
       </div>
       <button class="start-btn" onclick="startQuiz()">Start Quiz</button>
       <button class="reset-btn" onclick="resetProgress()">Reset Progress</button>
+      <button class="reset-btn change-words-btn" onclick="showInputScreen()">Change Words</button>
     </div>
 
-    <div class="quiz-screen" id="quiz-screen">
+    <div class="quiz-screen" id="quiz-screen" style="display: none;">
       <div class="content">
         <div class="word-display">
           <div class="word-label" id="word-label">What does this word mean?</div>
@@ -465,967 +76,111 @@
     </div>
   </div>
 
+  <script src="config.js"></script>
+  <script src="gemini.js"></script>
+  <script src="game.js"></script>
   <script>
-    const WORDS = {
-      "Abandon": {syn: "forsake", ant: "keep", def: "To give up completely; to leave behind", ex: "She decided to abandon her old habits and start fresh."},
-      "Abbreviation": {syn: "shortening", ant: "expansion", def: "A shortened form of a word or phrase", ex: "Dr. is an abbreviation for Doctor."},
-      "Abdicate": {syn: "renounce", ant: "claim", def: "To give up a position of power or responsibility", ex: "The king chose to abdicate the throne."},
-      "Abhor": {syn: "detest", ant: "love", def: "To regard with disgust and hatred", ex: "She abhors violence of any kind."},
-      "Abridge": {syn: "shorten", ant: "expand", def: "To reduce or condense a written work", ex: "The editor had to abridge the novel for the magazine."},
-      "Abrupt": {syn: "sudden", ant: "gradual", def: "Unexpected and without warning; curt in manner", ex: "His abrupt departure surprised everyone at the party."},
-      "Abundant": {syn: "plentiful", ant: "scarce", def: "Existing in large quantities; more than enough", ex: "The garden produced an abundant harvest this year."},
-      "Abyss": {syn: "chasm", ant: "peak", def: "A deep or seemingly bottomless pit; a profound difference", ex: "He stared into the dark abyss of the canyon."},
-      "Acclaimed": {syn: "praised", ant: "criticized", def: "Publicly praised or celebrated", ex: "The acclaimed author won several literary awards."},
-      "Accord": {syn: "agreement", ant: "discord", def: "A formal agreement or harmony between parties", ex: "The two nations reached an accord on trade policies."},
-      "Acknowledge": {syn: "admit", ant: "deny", def: "To accept or recognize the existence or truth of something", ex: "He refused to acknowledge his mistake."},
-      "Acrid": {syn: "bitter", ant: "sweet", def: "Having a strong, unpleasant taste or smell", ex: "The acrid smell of smoke filled the room."},
-      "Acumen": {syn: "insight", ant: "ignorance", def: "The ability to make good judgments and quick decisions", ex: "Her business acumen helped the company thrive."},
-      "Acute": {syn: "sharp", ant: "dull", def: "Intense or severe; having a sharp perception", ex: "She has an acute sense of hearing."},
-      "Adamant": {syn: "unyielding", ant: "flexible", def: "Refusing to be persuaded or to change one\'s mind", ex: "He was adamant about not changing the deadline."},
-      "Adapt": {syn: "adjust", ant: "resist", def: "To change to fit new circumstances", ex: "Animals must adapt to survive in changing environments."},
-      "Adept": {syn: "skilled", ant: "incompetent", def: "Very skilled or proficient at something", ex: "She is adept at solving complex problems."},
-      "Adhere": {syn: "stick", ant: "detach", def: "To stick firmly; to follow rules or beliefs", ex: "Please adhere to the guidelines provided."},
-      "Adhesive": {syn: "sticky", ant: "slippery", def: "A substance used for sticking things together", ex: "Use strong adhesive to attach the pieces."},
-      "Admire": {syn: "respect", ant: "despise", def: "To regard with approval, respect, or wonder", ex: "I admire her dedication to her work."},
-      "Admonish": {syn: "warn", ant: "praise", def: "To warn or reprimand someone firmly", ex: "The teacher admonished the students for being late."},
-      "Adversary": {syn: "opponent", ant: "ally", def: "One\'s opponent in a contest or conflict", ex: "He faced his adversary in the championship match."},
-      "Aesthete": {syn: "connoisseur", ant: "philistine", def: "A person who has refined sensitivity toward art and beauty", ex: "As an aesthete, she appreciated fine art and design."},
-      "Affiliation": {syn: "association", ant: "separation", def: "A connection or association with a group", ex: "His affiliation with the organization opened many doors."},
-      "Agenda": {syn: "schedule", ant: "spontaneity", def: "A list of items to be discussed or done", ex: "What\'s on the agenda for today\'s meeting?"},
-      "Aggrandize": {syn: "enhance", ant: "diminish", def: "To increase the power, status, or wealth of", ex: "He used his position to aggrandize his own reputation."},
-      "Aggravate": {syn: "worsen", ant: "improve", def: "To make a problem or situation worse", ex: "Scratching will only aggravate the rash."},
-      "Aggregate": {syn: "total", ant: "individual", def: "A whole formed by combining several elements", ex: "The aggregate score determines the winner."},
-      "Agile": {syn: "nimble", ant: "clumsy", def: "Able to move quickly and easily", ex: "The agile gymnast performed a flawless routine."},
-      "Ail": {syn: "trouble", ant: "comfort", def: "To cause pain or difficulty to", ex: "What ails you today?"},
-      "Aimless": {syn: "purposeless", ant: "focused", def: "Without purpose or direction", ex: "He spent an aimless afternoon wandering the streets."},
-      "Akin": {syn: "similar", ant: "different", def: "Of similar character or nature", ex: "Her feelings were akin to those of a protective mother."},
-      "Alarmed": {syn: "frightened", ant: "calm", def: "Feeling fear or anxiety about something", ex: "She was alarmed by the strange noise outside."},
-      "Allege": {syn: "claim", ant: "deny", def: "To assert without proof", ex: "The witness alleged that he saw the suspect flee."},
-      "Aloof": {syn: "distant", ant: "friendly", def: "Not friendly or forthcoming; cool and distant", ex: "He remained aloof from his colleagues."},
-      "Alter": {syn: "change", ant: "preserve", def: "To make different; to modify", ex: "She decided to alter the dress to fit better."},
-      "Altruism": {syn: "selflessness", ant: "selfishness", def: "Unselfish concern for the welfare of others", ex: "Her altruism led her to volunteer at the shelter."},
-      "Amalgamate": {syn: "combine", ant: "separate", def: "To merge or unite to form one organization", ex: "The two companies decided to amalgamate."},
-      "Ambiguous": {syn: "unclear", ant: "clear", def: "Open to more than one interpretation; unclear", ex: "The instructions were ambiguous and confusing."},
-      "Ambivalent": {syn: "uncertain", ant: "decisive", def: "Having mixed feelings about something", ex: "She felt ambivalent about accepting the job offer."},
-      "Ameliorate": {syn: "improve", ant: "worsen", def: "To make something bad better", ex: "New policies were introduced to ameliorate working conditions."},
-      "Amiable": {syn: "friendly", ant: "hostile", def: "Having a friendly and pleasant manner", ex: "The amiable host made everyone feel welcome."},
-      "Amorphous": {syn: "shapeless", ant: "defined", def: "Without a clear shape or form", ex: "The amorphous blob of clay awaited the sculptor\'s hands."},
-      "Analyze": {syn: "examine", ant: "ignore", def: "To examine in detail", ex: "Scientists analyze data to draw conclusions."},
-      "Ancient": {syn: "old", ant: "modern", def: "Belonging to the very distant past", ex: "The ancient ruins attracted many tourists."},
-      "Androgynous": {syn: "unisex", ant: "gendered", def: "Partly male and partly female in appearance", ex: "The model had an androgynous look."},
-      "Anguish": {syn: "agony", ant: "joy", def: "Severe mental or physical pain", ex: "She felt deep anguish over the loss."},
-      "Animosity": {syn: "hostility", ant: "goodwill", def: "Strong hostility or hatred", ex: "There was animosity between the rival teams."},
-      "Annex": {syn: "attach", ant: "detach", def: "To add territory to one\'s own; an addition to a building", ex: "The country attempted to annex the neighboring region."},
-      "Antagonistic": {syn: "hostile", ant: "friendly", def: "Showing or feeling active opposition", ex: "His antagonistic attitude created tension."},
-      "Antipathy": {syn: "aversion", ant: "affection", def: "A deep-seated feeling of dislike", ex: "She felt antipathy toward dishonest people."},
-      "Anxious": {syn: "worried", ant: "calm", def: "Experiencing worry or unease", ex: "He was anxious about the upcoming exam."},
-      "Apprehension": {syn: "dread", ant: "confidence", def: "Anxiety about the future; understanding", ex: "She felt apprehension before the interview."},
-      "Approximate": {syn: "estimate", ant: "exact", def: "Close to the actual but not exact", ex: "Give me an approximate time of arrival."},
-      "Arbitrary": {syn: "random", ant: "deliberate", def: "Based on random choice rather than reason", ex: "The decision seemed arbitrary and unfair."},
-      "Arid": {syn: "dry", ant: "humid", def: "Having little or no rain; very dry", ex: "Few plants can survive in arid desert conditions."},
-      "Ascertain": {syn: "determine", ant: "guess", def: "To find out for certain", ex: "We need to ascertain the facts before proceeding."},
-      "Ascetic": {syn: "austere", ant: "indulgent", def: "Characterized by severe self-discipline and abstention", ex: "The monk lived an ascetic lifestyle."},
-      "Aspect": {syn: "feature", ant: "whole", def: "A particular part or feature of something", ex: "We need to consider every aspect of the problem."},
-      "Aspiration": {syn: "ambition", ant: "apathy", def: "A hope or ambition to achieve something", ex: "Her aspiration is to become a doctor."},
-      "Assail": {syn: "attack", ant: "defend", def: "To make a violent attack on", ex: "Critics assailed the new policy."},
-      "Assent": {syn: "agree", ant: "dissent", def: "To express approval or agreement", ex: "The board gave their assent to the proposal."},
-      "Assert": {syn: "declare", ant: "deny", def: "To state a fact confidently", ex: "She asserted her innocence throughout the trial."},
-      "Assess": {syn: "evaluate", ant: "ignore", def: "To evaluate or estimate the nature of something", ex: "The teacher will assess your progress."},
-      "Assured": {syn: "confident", ant: "doubtful", def: "Confident and self-possessed", ex: "She spoke in an assured tone."},
-      "Astonish": {syn: "amaze", ant: "bore", def: "To surprise or impress greatly", ex: "The magician\'s tricks astonished the audience."},
-      "Attenuate": {syn: "weaken", ant: "strengthen", def: "To reduce the force or value of something", ex: "The thick walls attenuate outside noise."},
-      "Austere": {syn: "severe", ant: "lavish", def: "Strict and serious in manner; plain and simple", ex: "The room had an austere, minimalist design."},
-      "Astute": {syn: "shrewd", ant: "naive", def: "Having sharp judgment; clever", ex: "The astute investor spotted the opportunity."},
-      "Audible": {syn: "hearable", ant: "inaudible", def: "Able to be heard", ex: "Her voice was barely audible over the noise."},
-      "Auspicious": {syn: "favorable", ant: "ominous", def: "Conducive to success; favorable", ex: "It was an auspicious start to the new year."},
-      "Authentic": {syn: "genuine", ant: "fake", def: "Of undisputed origin; genuine", ex: "The museum verified the painting was authentic."},
-      "Authoritative": {syn: "commanding", ant: "submissive", def: "Able to be trusted as accurate; commanding", ex: "She spoke in an authoritative voice."},
-      "Avarice": {syn: "greed", ant: "generosity", def: "Extreme greed for wealth", ex: "His avarice led him to make unethical choices."},
-      "Banal": {syn: "trite", ant: "original", def: "Lacking originality; boring", ex: "The movie was filled with banal dialogue."},
-      "Barrage": {syn: "onslaught", ant: "trickle", def: "A concentrated outpouring of questions or criticisms", ex: "The speaker faced a barrage of questions."},
-      "Barren": {syn: "sterile", ant: "fertile", def: "Too poor to produce vegetation; empty", ex: "The barren landscape stretched for miles."},
-      "Barrier": {syn: "obstacle", ant: "opening", def: "A structure that blocks movement or access", ex: "The language barrier made communication difficult."},
-      "Bashful": {syn: "shy", ant: "bold", def: "Reluctant to draw attention to oneself", ex: "The bashful child hid behind her mother."},
-      "Bastion": {syn: "stronghold", ant: "weakness", def: "A place or system that strongly defends something", ex: "The castle was a bastion of defense."},
-      "Bedlam": {syn: "chaos", ant: "order", def: "A scene of uproar and confusion", ex: "The classroom was bedlam after the announcement."},
-      "Bellicose": {syn: "aggressive", ant: "peaceful", def: "Demonstrating aggression and willingness to fight", ex: "His bellicose attitude started many arguments."},
-      "Belligerent": {syn: "hostile", ant: "peaceful", def: "Hostile and aggressive", ex: "The belligerent customer demanded a refund."},
-      "Bemoan": {syn: "lament", ant: "celebrate", def: "To express discontent or sorrow over something", ex: "She bemoaned the loss of the old traditions."},
-      "Benevolent": {syn: "kind", ant: "malevolent", def: "Well-meaning and kindly", ex: "The benevolent donor gave generously to charity."},
-      "Benign": {syn: "harmless", ant: "harmful", def: "Gentle and kind; not harmful", ex: "The tumor was found to be benign."},
-      "Bequest": {syn: "inheritance", ant: "disinheritance", def: "A legacy or gift left in a will", ex: "He received a bequest from his grandmother."},
-      "Betray": {syn: "deceive", ant: "support", def: "To be disloyal to; to reveal unintentionally", ex: "He would never betray his friends."},
-      "Bewilder": {syn: "confuse", ant: "clarify", def: "To cause someone to become confused", ex: "The complex instructions bewildered the new employee."},
-      "Biased": {syn: "prejudiced", ant: "impartial", def: "Unfairly prejudiced for or against something", ex: "The reporter was accused of writing a biased article."},
-      "Blatant": {syn: "obvious", ant: "subtle", def: "Completely lacking in subtlety; very obvious", ex: "It was a blatant lie that fooled no one."},
-      "Blunt": {syn: "direct", ant: "tactful", def: "Uncompromisingly straightforward; not sharp", ex: "He was blunt in his assessment of the situation."},
-      "Bolster": {syn: "support", ant: "undermine", def: "To support or strengthen", ex: "New evidence helped bolster her argument."},
-      "Bombastic": {syn: "pompous", ant: "understated", def: "High-sounding but with little meaning", ex: "His bombastic speech impressed no one."},
-      "Bourgeois": {syn: "middle-class", ant: "proletarian", def: "Belonging to the middle class; conventional", ex: "They lived a comfortable bourgeois lifestyle."},
-      "Brandish": {syn: "wave", ant: "conceal", def: "To wave or flourish something as a threat", ex: "He brandished a sword at his opponent."},
-      "Brash": {syn: "bold", ant: "cautious", def: "Self-assertive in a rude way", ex: "His brash behavior offended many people."},
-      "Brazen": {syn: "bold", ant: "timid", def: "Bold and without shame", ex: "It was a brazen attempt to steal the election."},
-      "Brittle": {syn: "fragile", ant: "flexible", def: "Hard but liable to break easily", ex: "The brittle branches snapped in the wind."},
-      "Burgeon": {syn: "flourish", ant: "decline", def: "To begin to grow or increase rapidly", ex: "The tech industry began to burgeon in the 1990s."},
-      "Cache": {syn: "stockpile", ant: "lack", def: "A collection of items stored in a hidden place", ex: "They found a cache of weapons in the basement."},
-      "Callow": {syn: "immature", ant: "mature", def: "Inexperienced and immature", ex: "The callow youth had much to learn."},
-      "Candid": {syn: "frank", ant: "evasive", def: "Truthful and straightforward", ex: "She gave a candid interview about her struggles."},
-      "Capitulate": {syn: "surrender", ant: "resist", def: "To cease to resist; to surrender", ex: "The army was forced to capitulate."},
-      "Capricious": {syn: "fickle", ant: "steady", def: "Given to sudden changes of mood or behavior", ex: "The capricious weather ruined our plans."},
-      "Cascade": {syn: "waterfall", ant: "trickle", def: "A waterfall; a succession of stages", ex: "A cascade of events led to the crisis."},
-      "Cater": {syn: "provide", ant: "neglect", def: "To provide food and service; to satisfy needs", ex: "The company caters to wealthy clients."},
-      "Cauterize": {syn: "sear", ant: "heal", def: "To burn tissue to stop bleeding or prevent infection", ex: "The doctor had to cauterize the wound."},
-      "Cautious": {syn: "careful", ant: "reckless", def: "Being careful to avoid danger or mistakes", ex: "She was cautious about investing her savings."},
-      "Censor": {syn: "suppress", ant: "allow", def: "To examine and suppress unacceptable content", ex: "The government tried to censor the press."},
-      "Chagrin": {syn: "dismay", ant: "delight", def: "Distress or embarrassment at failure", ex: "Much to his chagrin, he lost the game."},
-      "Chasm": {syn: "gap", ant: "bridge", def: "A deep fissure; a profound difference", ex: "There was a chasm between their viewpoints."},
-      "Chronic": {syn: "persistent", ant: "temporary", def: "Persisting for a long time; habitual", ex: "He suffers from chronic back pain."},
-      "Chronicle": {syn: "record", ant: "ignore", def: "A factual written account of events", ex: "The book chronicles the history of the city."},
-      "Coalesce": {syn: "merge", ant: "separate", def: "To come together to form one mass or whole", ex: "The various groups coalesced into one movement."},
-      "Coerce": {syn: "force", ant: "persuade", def: "To persuade using force or threats", ex: "They tried to coerce him into signing the contract."},
-      "Commodities": {syn: "goods", ant: "liabilities", def: "Raw materials or agricultural products for trade", ex: "Oil and gold are valuable commodities."},
-      "Compassion": {syn: "sympathy", ant: "indifference", def: "Sympathetic concern for others\' suffering", ex: "She showed compassion for the homeless."},
-      "Compel": {syn: "force", ant: "deter", def: "To force or oblige someone to do something", ex: "Evidence compelled him to change his opinion."},
-      "Competent": {syn: "capable", ant: "incompetent", def: "Having the necessary ability or skills", ex: "She is a competent manager."},
-      "Composure": {syn: "calmness", ant: "agitation", def: "The state of being calm and in control", ex: "He maintained his composure during the crisis."},
-      "Comprehensive": {syn: "thorough", ant: "incomplete", def: "Including all elements; thorough", ex: "The report provides a comprehensive analysis."},
-      "Conceal": {syn: "hide", ant: "reveal", def: "To keep from being seen; to hide", ex: "She tried to conceal her disappointment."},
-      "Concise": {syn: "brief", ant: "verbose", def: "Giving information clearly in few words", ex: "Write a concise summary of the article."},
-      "Condemn": {syn: "criticize", ant: "praise", def: "To express complete disapproval of", ex: "Critics condemned the decision as reckless."},
-      "Condescending": {syn: "patronizing", ant: "respectful", def: "Acting superior to others", ex: "His condescending tone irritated everyone."},
-      "Condone": {syn: "accept", ant: "condemn", def: "To accept behavior considered wrong", ex: "The school does not condone cheating."},
-      "Confer": {syn: "consult", ant: "withhold", def: "To grant or bestow; to have discussions", ex: "The university will confer degrees at graduation."},
-      "Confine": {syn: "restrict", ant: "release", def: "To keep within limits; to imprison", ex: "The patient was confined to bed rest."},
-      "Conform": {syn: "comply", ant: "rebel", def: "To behave according to accepted standards", ex: "Students are expected to conform to the dress code."},
-      "Confound": {syn: "confuse", ant: "clarify", def: "To cause surprise or confusion", ex: "The results confounded the researchers."},
-      "Congenial": {syn: "pleasant", ant: "disagreeable", def: "Pleasant because of shared interests", ex: "The congenial atmosphere made the party enjoyable."},
-      "Conjure": {syn: "summon", ant: "dismiss", def: "To make something appear as if by magic", ex: "The chef can conjure delicious meals from simple ingredients."},
-      "Conniving": {syn: "scheming", ant: "honest", def: "Secretly planning something harmful", ex: "The conniving villain plotted his revenge."},
-      "Connoisseur": {syn: "expert", ant: "amateur", def: "An expert judge in matters of taste", ex: "He is a connoisseur of fine wines."},
-      "Consensus": {syn: "agreement", ant: "disagreement", def: "General agreement among a group", ex: "The committee reached a consensus on the issue."},
-      "Conspicuous": {syn: "noticeable", ant: "inconspicuous", def: "Standing out so as to be clearly visible", ex: "Her bright red dress was conspicuous in the crowd."},
-      "Consume": {syn: "devour", ant: "abstain", def: "To eat, drink, or use up", ex: "Americans consume large amounts of energy."},
-      "Contemplation": {syn: "reflection", ant: "action", def: "Deep reflective thought", ex: "She sat in quiet contemplation."},
-      "Contented": {syn: "satisfied", ant: "dissatisfied", def: "Happy and at ease", ex: "The contented cat purred on the couch."},
-      "Contradiction": {syn: "conflict", ant: "agreement", def: "A combination of statements that oppose each other", ex: "There was a contradiction in his testimony."},
-      "Contrite": {syn: "remorseful", ant: "unrepentant", def: "Feeling or expressing remorse", ex: "He was contrite after hurting her feelings."},
-      "Controversial": {syn: "contentious", ant: "uncontroversial", def: "Causing disagreement or discussion", ex: "The controversial decision divided the community."},
-      "Conventional": {syn: "traditional", ant: "unconventional", def: "Based on what is generally done; ordinary", ex: "She rejected conventional career paths."},
-      "Copious": {syn: "abundant", ant: "scarce", def: "Abundant in supply or quantity", ex: "He took copious notes during the lecture."},
-      "Cordial": {syn: "friendly", ant: "hostile", def: "Warm and friendly", ex: "They exchanged cordial greetings."},
-      "Corpulent": {syn: "obese", ant: "thin", def: "Excessively fat", ex: "The corpulent man struggled to climb the stairs."},
-      "Corrosion": {syn: "deterioration", ant: "preservation", def: "The process of being corroded or destroyed", ex: "Rust is a form of corrosion."},
-      "Counsel": {syn: "advice", ant: "misguidance", def: "Advice given formally; a lawyer", ex: "She sought counsel from her mentor."},
-      "Counterfeit": {syn: "fake", ant: "genuine", def: "Made in imitation to deceive", ex: "The police seized counterfeit currency."},
-      "Cower": {syn: "cringe", ant: "confront", def: "To crouch in fear", ex: "The dog cowered in the corner during the storm."},
-      "Credible": {syn: "believable", ant: "unbelievable", def: "Able to be believed; trustworthy", ex: "The witness gave a credible account of events."},
-      "Creed": {syn: "belief", ant: "disbelief", def: "A system of religious or other beliefs", ex: "People of every creed were welcome."},
-      "Crucial": {syn: "critical", ant: "unimportant", def: "Of great importance", ex: "This is a crucial moment in history."},
-      "Cunning": {syn: "crafty", ant: "naive", def: "Having skill in achieving goals by deceit", ex: "The cunning fox escaped the trap."},
-      "Dawdle": {syn: "linger", ant: "hurry", def: "To waste time; to move slowly", ex: "Don\'t dawdle or we\'ll be late."},
-      "Debate": {syn: "discuss", ant: "agree", def: "A formal discussion on a topic", ex: "The candidates participated in a televised debate."},
-      "Debt": {syn: "obligation", ant: "credit", def: "Something owed to another", ex: "He worked hard to pay off his debt."},
-      "Deceive": {syn: "mislead", ant: "enlighten", def: "To cause someone to believe something false", ex: "She would never deceive her friends."},
-      "Decline": {syn: "decrease", ant: "increase", def: "To become smaller or weaker; to refuse", ex: "Sales began to decline last quarter."},
-      "Decree": {syn: "order", ant: "request", def: "An official order issued by an authority", ex: "The king issued a decree banning the practice."},
-      "Defensive": {syn: "protective", ant: "offensive", def: "Used or intended to defend or protect", ex: "He became defensive when questioned."},
-      "Defiant": {syn: "rebellious", ant: "compliant", def: "Showing open resistance", ex: "The defiant teenager refused to follow the rules."},
-      "Deficient": {syn: "lacking", ant: "sufficient", def: "Not having enough of a specified quality", ex: "The diet was deficient in vitamins."},
-      "Deft": {syn: "skillful", ant: "clumsy", def: "Demonstrating skill and cleverness", ex: "She handled the situation with deft diplomacy."},
-      "Dejection": {syn: "sadness", ant: "elation", def: "A sad and depressed state", ex: "He sank into dejection after the loss."},
-      "Deliberate": {syn: "intentional", ant: "accidental", def: "Done consciously and intentionally", ex: "It was a deliberate attempt to mislead."},
-      "Delicate": {syn: "fragile", ant: "sturdy", def: "Easily broken or damaged; requiring careful handling", ex: "Handle the delicate glassware with care."},
-      "Depict": {syn: "portray", ant: "misrepresent", def: "To show or represent in a picture or story", ex: "The mural depicts scenes from local history."},
-      "Despair": {syn: "hopelessness", ant: "hope", def: "The complete loss of hope", ex: "She felt despair after failing the exam."},
-      "Desolate": {syn: "barren", ant: "flourishing", def: "Deserted and empty; feeling lonely", ex: "The desolate landscape offered no shelter."},
-      "Detest": {syn: "hate", ant: "love", def: "To dislike intensely", ex: "I detest having to wake up early."},
-      "Detrimental": {syn: "harmful", ant: "beneficial", def: "Tending to cause harm", ex: "Smoking is detrimental to your health."},
-      "Deviate": {syn: "diverge", ant: "conform", def: "To depart from an established course", ex: "Do not deviate from the approved plan."},
-      "Devotion": {syn: "dedication", ant: "indifference", def: "Love, loyalty, or enthusiasm for something", ex: "Her devotion to her family was evident."},
-      "Dexterity": {syn: "skill", ant: "clumsiness", def: "Skill in performing tasks with the hands", ex: "The surgeon\'s dexterity was remarkable."},
-      "Dignity": {syn: "honor", ant: "shame", def: "The quality of being worthy of respect", ex: "She maintained her dignity throughout the ordeal."},
-      "Dilute": {syn: "weaken", ant: "concentrate", def: "To make a liquid thinner or weaker", ex: "Dilute the juice with water."},
-      "Differentiate": {syn: "distinguish", ant: "confuse", def: "To recognize or show differences", ex: "It\'s hard to differentiate between the twins."},
-      "Disavow": {syn: "deny", ant: "acknowledge", def: "To deny any responsibility or support for", ex: "The company disavowed the controversial statement."},
-      "Discreet": {syn: "careful", ant: "indiscreet", def: "Careful to avoid attracting attention", ex: "Please be discreet about this matter."},
-      "Disgraced": {syn: "shamed", ant: "honored", def: "Having fallen from favor or respect", ex: "The disgraced politician resigned from office."},
-      "Dismayed": {syn: "distressed", ant: "encouraged", def: "Feeling distress and concern", ex: "She was dismayed by the bad news."},
-      "Dispel": {syn: "banish", ant: "create", def: "To drive away or eliminate", ex: "His words helped dispel her fears."},
-      "Disparage": {syn: "belittle", ant: "praise", def: "To regard or represent as being of little worth", ex: "Don\'t disparage her efforts."},
-      "Disperse": {syn: "scatter", ant: "gather", def: "To distribute or spread over a wide area", ex: "The crowd began to disperse after the concert."},
-      "Display": {syn: "show", ant: "conceal", def: "To put something in a place where it can be seen", ex: "The museum displays ancient artifacts."},
-      "Disputed": {syn: "contested", ant: "accepted", def: "Argued about; in disagreement", ex: "The disputed territory caused conflict."},
-      "Dissect": {syn: "analyze", ant: "combine", def: "To cut apart for examination; to analyze in detail", ex: "Scientists dissected the specimen for study."},
-      "Distasteful": {syn: "unpleasant", ant: "pleasant", def: "Causing dislike or disgust", ex: "He found the task distasteful but necessary."},
-      "Distend": {syn: "swell", ant: "shrink", def: "To swell or cause to swell", ex: "The balloon distended as it filled with air."},
-      "Distort": {syn: "twist", ant: "clarify", def: "To pull out of shape; to give a misleading account", ex: "Don\'t distort the facts to suit your argument."},
-      "Diversity": {syn: "variety", ant: "uniformity", def: "A range of different things; variety", ex: "The city celebrates its cultural diversity."},
-      "Docile": {syn: "obedient", ant: "stubborn", def: "Ready to accept control or instruction", ex: "The docile puppy followed commands easily."},
-      "Domestic": {syn: "household", ant: "foreign", def: "Relating to the home or family; not foreign", ex: "She preferred domestic travel to international trips."},
-      "Dominate": {syn: "control", ant: "submit", def: "To have control or power over", ex: "The team dominated the competition."},
-      "Dormant": {syn: "inactive", ant: "active", def: "Temporarily inactive; asleep", ex: "The volcano has been dormant for centuries."},
-      "Doubtful": {syn: "uncertain", ant: "certain", def: "Feeling uncertain about something", ex: "I\'m doubtful that we\'ll finish on time."},
-      "Drastic": {syn: "extreme", ant: "mild", def: "Likely to have a strong or far-reaching effect", ex: "Drastic measures were needed to solve the problem."},
-      "Dread": {syn: "fear", ant: "anticipate", def: "Great fear or apprehension", ex: "She felt dread before the surgery."},
-      "Drenched": {syn: "soaked", ant: "dry", def: "Thoroughly wet", ex: "We got drenched in the sudden rainstorm."},
-      "Dubious": {syn: "questionable", ant: "certain", def: "Hesitating or doubting; of questionable value", ex: "I\'m dubious about the accuracy of that claim."},
-      "Duration": {syn: "length", ant: "instant", def: "The time during which something continues", ex: "The duration of the flight is three hours."},
-      "Eager": {syn: "keen", ant: "reluctant", def: "Strongly wanting to do or have something", ex: "She was eager to start her new job."},
-      "Economize": {syn: "save", ant: "waste", def: "To spend less; reduce expenses", ex: "We need to economize to stay within budget."},
-      "Egotist": {syn: "narcissist", ant: "altruist", def: "A person who is excessively conceited", ex: "The egotist only talked about himself."},
-      "Egress": {syn: "exit", ant: "entrance", def: "The action of going out; an exit", ex: "Emergency egress routes must be kept clear."},
-      "Elegant": {syn: "refined", ant: "crude", def: "Graceful and stylish in appearance", ex: "She wore an elegant evening gown."},
-      "Elegy": {syn: "lament", ant: "celebration", def: "A mournful poem, especially for the dead", ex: "The poet wrote an elegy for his fallen friend."},
-      "Elongate": {syn: "lengthen", ant: "shorten", def: "To make longer; to extend", ex: "The artist elongated the figure\'s limbs."},
-      "Eloquent": {syn: "articulate", ant: "inarticulate", def: "Fluent and persuasive in speaking or writing", ex: "She gave an eloquent speech at the ceremony."},
-      "Embodiment": {syn: "personification", ant: "antithesis", def: "A tangible or visible form of an idea", ex: "She is the embodiment of grace."},
-      "Embryonic": {syn: "developing", ant: "mature", def: "In an early stage of development", ex: "The project is still in its embryonic stages."},
-      "Emphasize": {syn: "stress", ant: "downplay", def: "To give special importance to something", ex: "I want to emphasize the importance of safety."},
-      "Endeavor": {syn: "attempt", ant: "neglect", def: "To try hard to do or achieve something", ex: "We will endeavor to meet your expectations."},
-      "Enigma": {syn: "mystery", ant: "solution", def: "A person or thing that is mysterious", ex: "The disappearance remains an enigma."},
-      "Entrust": {syn: "assign", ant: "withhold", def: "To give responsibility to someone", ex: "She entrusted her savings to the bank."},
-      "Envy": {syn: "jealousy", ant: "contentment", def: "A feeling of discontented longing for another\'s advantages", ex: "His success was the envy of his peers."},
-      "Ephemeral": {syn: "fleeting", ant: "permanent", def: "Lasting for a very short time", ex: "Fame can be ephemeral in the entertainment industry."},
-      "Epitome": {syn: "embodiment", ant: "antithesis", def: "A perfect example of a quality or type", ex: "She is the epitome of elegance."},
-      "Equity": {syn: "fairness", ant: "inequity", def: "The quality of being fair; ownership value", ex: "The company promotes equity in the workplace."},
-      "Equivalent": {syn: "equal", ant: "different", def: "Equal in value, function, or meaning", ex: "One mile is equivalent to about 1.6 kilometers."},
-      "Eradicate": {syn: "eliminate", ant: "establish", def: "To destroy completely; to put an end to", ex: "Scientists hope to eradicate the disease."},
-      "Erratic": {syn: "unpredictable", ant: "consistent", def: "Not even or regular; unpredictable", ex: "His erratic behavior concerned his friends."},
-      "Esoteric": {syn: "obscure", ant: "common", def: "Intended for a small group with special knowledge", ex: "The professor\'s esoteric lecture confused most students."},
-      "Essential": {syn: "necessary", ant: "optional", def: "Absolutely necessary; extremely important", ex: "Water is essential for life."},
-      "Esteem": {syn: "respect", ant: "disdain", def: "Respect and admiration", ex: "She is held in high esteem by her colleagues."},
-      "Euphemism": {syn: "understatement", ant: "dysphemism", def: "A mild expression for something unpleasant", ex: "\'Passed away\' is a euphemism for \'died.\'"},
-      "Evacuate": {syn: "empty", ant: "occupy", def: "To remove people from a dangerous place", ex: "Residents were ordered to evacuate before the hurricane."},
-      "Evade": {syn: "avoid", ant: "confront", def: "To escape or avoid, especially by cleverness", ex: "He tried to evade the question."},
-      "Evict": {syn: "expel", ant: "admit", def: "To force someone to leave a property", ex: "The landlord threatened to evict the tenants."},
-      "Exacerbate": {syn: "worsen", ant: "alleviate", def: "To make a problem or situation worse", ex: "The drought exacerbated the food shortage."},
-      "Exalt": {syn: "praise", ant: "demean", def: "To hold in very high regard; to elevate", ex: "The poem exalts the beauty of nature."},
-      "Exasperate": {syn: "frustrate", ant: "please", def: "To irritate intensely; to infuriate", ex: "His constant lateness exasperated his boss."},
-      "Excavate": {syn: "dig", ant: "bury", def: "To dig out and remove earth; to uncover", ex: "Archaeologists excavated the ancient tomb."},
-      "Excel": {syn: "surpass", ant: "fail", def: "To be exceptionally good at something", ex: "She excels in mathematics."},
-      "Exemplify": {syn: "illustrate", ant: "contradict", def: "To be a typical example of", ex: "His career exemplifies the American dream."},
-      "Exhilarating": {syn: "thrilling", ant: "boring", def: "Making one feel very happy and excited", ex: "The roller coaster ride was exhilarating."},
-      "Exile": {syn: "banishment", ant: "return", def: "The state of being barred from one\'s country", ex: "The writer lived in exile for many years."},
-      "Exquisite": {syn: "beautiful", ant: "ugly", def: "Extremely beautiful and delicate", ex: "The jewelry featured exquisite craftsmanship."},
-      "Extend": {syn: "lengthen", ant: "shorten", def: "To make longer or larger; to offer", ex: "They decided to extend the deadline."},
-      "Extent": {syn: "degree", ant: "limit", def: "The size or scale of something", ex: "The full extent of the damage is unknown."},
-      "Extinct": {syn: "vanished", ant: "extant", def: "No longer in existence", ex: "Dinosaurs have been extinct for millions of years."},
-      "Extol": {syn: "praise", ant: "criticize", def: "To praise enthusiastically", ex: "Critics extolled the virtues of the new novel."},
-      "Extravagant": {syn: "lavish", ant: "frugal", def: "Lacking restraint in spending; elaborate", ex: "They threw an extravagant party."},
-      "Facet": {syn: "aspect", ant: "whole", def: "One side of something many-sided; an aspect", ex: "Every facet of the issue must be considered."},
-      "Fallacy": {syn: "misconception", ant: "truth", def: "A mistaken belief or false reasoning", ex: "The idea that money brings happiness is a fallacy."},
-      "Fallow": {syn: "dormant", ant: "cultivated", def: "Left unplanted; inactive", ex: "The farmer let the field lie fallow for a year."},
-      "Falter": {syn: "hesitate", ant: "persevere", def: "To lose strength or momentum; to hesitate", ex: "Her voice faltered as she spoke."},
-      "Fathom": {syn: "understand", ant: "misunderstand", def: "To understand after much thought", ex: "I couldn\'t fathom his strange behavior."},
-      "Fatigue": {syn: "exhaustion", ant: "energy", def: "Extreme tiredness", ex: "Fatigue set in after the long journey."},
-      "Feasible": {syn: "possible", ant: "impossible", def: "Possible and practical to do", ex: "Is this plan feasible within our budget?"},
-      "Feeble": {syn: "weak", ant: "strong", def: "Lacking physical strength; unconvincing", ex: "He made a feeble attempt to explain."},
-      "Feign": {syn: "pretend", ant: "reveal", def: "To pretend to be affected by something", ex: "She feigned surprise at the party."},
-      "Feisty": {syn: "spirited", ant: "meek", def: "Lively and determined; touchy", ex: "The feisty kitten attacked the toy."},
-      "Fickle": {syn: "changeable", ant: "constant", def: "Changing frequently in loyalties or affections", ex: "The fickle weather ruined our plans."},
-      "Flaccid": {syn: "limp", ant: "firm", def: "Soft and hanging loosely; lacking force", ex: "The flaccid handshake made a poor impression."},
-      "Flamboyant": {syn: "showy", ant: "plain", def: "Tending to attract attention; brightly colored", ex: "He has a flamboyant personality."},
-      "Flatter": {syn: "compliment", ant: "insult", def: "To lavish praise, sometimes insincerely", ex: "Don\'t try to flatter me into agreeing."},
-      "Fleeting": {syn: "brief", ant: "lasting", def: "Lasting for a very short time", ex: "She caught a fleeting glimpse of the deer."},
-      "Flotsam": {syn: "debris", ant: "treasure", def: "Floating wreckage; useless items", ex: "Flotsam washed up on the beach after the storm."},
-      "Flourish": {syn: "thrive", ant: "decline", def: "To grow or develop successfully", ex: "The garden flourished in the spring sunshine."},
-      "Fluctuate": {syn: "vary", ant: "stabilize", def: "To rise and fall irregularly", ex: "Stock prices fluctuate daily."},
-      "Foolhardy": {syn: "reckless", ant: "cautious", def: "Recklessly bold or rash", ex: "It was foolhardy to go hiking in the storm."},
-      "Foreseen": {syn: "predicted", ant: "unexpected", def: "Anticipated or predicted beforehand", ex: "The outcome was not foreseen by anyone."},
-      "Forge": {syn: "create", ant: "destroy", def: "To create; to produce a fraudulent copy", ex: "They worked to forge a new alliance."},
-      "Formulate": {syn: "devise", ant: "improvise", def: "To create or prepare methodically", ex: "Scientists formulated a new theory."},
-      "Fortunate": {syn: "lucky", ant: "unfortunate", def: "Favored by or involving good luck", ex: "We were fortunate to escape injury."},
-      "Foster": {syn: "encourage", ant: "discourage", def: "To encourage the development of", ex: "The program fosters creativity in children."},
-      "Fragile": {syn: "delicate", ant: "sturdy", def: "Easily broken or damaged", ex: "Handle the fragile antiques with care."},
-      "Frank": {syn: "honest", ant: "deceptive", def: "Open and sincere in expression", ex: "Let me be frank with you about the situation."},
-      "Frugal": {syn: "thrifty", ant: "wasteful", def: "Sparing or economical with money", ex: "Her frugal habits helped her save money."},
-      "Fulcrum": {syn: "pivot", ant: "edge", def: "The point on which a lever rests; central point", ex: "Education is the fulcrum of social change."},
-      "Fundamental": {syn: "basic", ant: "secondary", def: "Forming a necessary base; essential", ex: "Reading is a fundamental skill."},
-      "Furious": {syn: "enraged", ant: "calm", def: "Extremely angry", ex: "He was furious when he discovered the deception."},
-      "Furtive": {syn: "secretive", ant: "open", def: "Attempting to avoid notice; secretive", ex: "She cast a furtive glance at the document."},
-      "Gap": {syn: "opening", ant: "closure", def: "A break or hole in something; a difference", ex: "There is a gap between theory and practice."},
-      "Genesis": {syn: "origin", ant: "conclusion", def: "The origin or beginning of something", ex: "The genesis of the idea came from a simple observation."},
-      "Genial": {syn: "friendly", ant: "unfriendly", def: "Friendly and cheerful", ex: "The genial host welcomed all the guests."},
-      "Generous": {syn: "giving", ant: "stingy", def: "Showing a readiness to give more than necessary", ex: "She made a generous donation to the charity."},
-      "Genuine": {syn: "authentic", ant: "fake", def: "Truly what something is said to be; sincere", ex: "His concern for others is genuine."},
-      "Germane": {syn: "relevant", ant: "irrelevant", def: "Relevant to a subject under consideration", ex: "His comments were not germane to the discussion."},
-      "Glean": {syn: "gather", ant: "scatter", def: "To collect information bit by bit", ex: "I managed to glean some facts from the article."},
-      "Glint": {syn: "sparkle", ant: "dull", def: "A small flash of light; a brief expression", ex: "A glint of mischief appeared in her eyes."},
-      "Glutton": {syn: "overeater", ant: "ascetic", def: "A person who eats excessively", ex: "He\'s a glutton for punishment."},
-      "Graceful": {syn: "elegant", ant: "awkward", def: "Having elegance or beauty of movement", ex: "The dancer moved with graceful precision."},
-      "Gratified": {syn: "pleased", ant: "disappointed", def: "Feeling or showing pleasure and satisfaction", ex: "She was gratified by the positive response."},
-      "Grievances": {syn: "complaints", ant: "satisfaction", def: "A cause for complaint; an injustice", ex: "Workers filed grievances about working conditions."},
-      "Gullible": {syn: "naive", ant: "skeptical", def: "Easily persuaded to believe something", ex: "The gullible tourist fell for the scam."},
-      "Haphazard": {syn: "random", ant: "organized", def: "Lacking any definite plan or order", ex: "The books were arranged in a haphazard manner."},
-      "Hardship": {syn: "difficulty", ant: "comfort", def: "Severe suffering or privation", ex: "The family endured great hardship during the war."},
-      "Hasten": {syn: "hurry", ant: "delay", def: "To move or act quickly", ex: "We must hasten our preparations."},
-      "Haughty": {syn: "arrogant", ant: "humble", def: "Arrogantly superior and disdainful", ex: "The haughty aristocrat looked down on everyone."},
-      "Hazard": {syn: "danger", ant: "safety", def: "A source of danger; to risk", ex: "Ice on the road is a hazard for drivers."},
-      "Hesitate": {syn: "pause", ant: "proceed", def: "To pause before acting due to uncertainty", ex: "Don\'t hesitate to ask for help."},
-      "Hideous": {syn: "ugly", ant: "beautiful", def: "Extremely ugly; horrifying", ex: "The mask was hideous and frightening."},
-      "Hinder": {syn: "obstruct", ant: "assist", def: "To create difficulties; to delay", ex: "Bad weather will hinder our progress."},
-      "Hoard": {syn: "stockpile", ant: "distribute", def: "To accumulate and store away", ex: "Squirrels hoard nuts for winter."},
-      "Homely": {syn: "plain", ant: "attractive", def: "Simple and unpretentious; unattractive", ex: "The cottage had a homely charm."},
-      "Idiosyncrasy": {syn: "quirk", ant: "normality", def: "A distinctive individual characteristic", ex: "One of her idiosyncrasies is collecting stamps."},
-      "Ignoble": {syn: "dishonorable", ant: "noble", def: "Not honorable; of low birth", ex: "His actions were ignoble and selfish."},
-      "Illuminate": {syn: "light", ant: "darken", def: "To light up; to clarify", ex: "The lamps illuminate the garden path."},
-      "Illustrate": {syn: "demonstrate", ant: "obscure", def: "To explain with examples or pictures", ex: "Charts illustrate the data clearly."},
-      "Imbue": {syn: "instill", ant: "remove", def: "To inspire with a quality or feeling", ex: "The coach imbued the team with confidence."},
-      "Immaculate": {syn: "spotless", ant: "dirty", def: "Perfectly clean; without flaws", ex: "Her apartment was always immaculate."},
-      "Impasse": {syn: "deadlock", ant: "breakthrough", def: "A situation with no progress possible", ex: "Negotiations reached an impasse."},
-      "Imply": {syn: "suggest", ant: "state", def: "To indicate without stating directly", ex: "Are you implying that I\'m wrong?"},
-      "Impulsive": {syn: "spontaneous", ant: "deliberate", def: "Acting without thinking", ex: "His impulsive purchase left him broke."},
-      "Inane": {syn: "silly", ant: "sensible", def: "Lacking sense or meaning; silly", ex: "The movie was filled with inane dialogue."},
-      "Incident": {syn: "event", ant: "non-event", def: "An event or occurrence", ex: "There was a minor incident in the parking lot."},
-      "Incidental": {syn: "minor", ant: "major", def: "Occurring by chance; secondary", ex: "The incidental expenses added up quickly."},
-      "Incision": {syn: "cut", ant: "closure", def: "A surgical cut in skin or flesh", ex: "The surgeon made a small incision."},
-      "Incisive": {syn: "sharp", ant: "dull", def: "Intelligently analytical and clear-thinking", ex: "Her incisive comments cut to the heart of the matter."},
-      "Incite": {syn: "provoke", ant: "calm", def: "To encourage violent or unlawful behavior", ex: "His speech incited the crowd to riot."},
-      "Incognito": {syn: "disguised", ant: "revealed", def: "Having one\'s identity concealed", ex: "The star traveled incognito to avoid fans."},
-      "Indifferent": {syn: "apathetic", ant: "concerned", def: "Having no interest or sympathy", ex: "He seemed indifferent to their suffering."},
-      "Indignant": {syn: "outraged", ant: "pleased", def: "Feeling anger at unfair treatment", ex: "She was indignant at the accusation."},
-      "Infiltrate": {syn: "penetrate", ant: "exit", def: "To enter secretly", ex: "Spies infiltrated the organization."},
-      "Ingenuity": {syn: "cleverness", ant: "stupidity", def: "The quality of being clever and inventive", ex: "His ingenuity solved the problem."},
-      "Ingress": {syn: "entry", ant: "egress", def: "The act of entering; an entrance", ex: "The building has limited ingress points."},
-      "Inhabit": {syn: "occupy", ant: "vacate", def: "To live in a place", ex: "Many species inhabit the rainforest."},
-      "Initial": {syn: "first", ant: "final", def: "Occurring at the beginning", ex: "My initial reaction was surprise."},
-      "Innate": {syn: "inborn", ant: "learned", def: "Natural; existing from birth", ex: "She has an innate sense of rhythm."},
-      "Innocuous": {syn: "harmless", ant: "harmful", def: "Not harmful or offensive", ex: "The innocuous remark was misunderstood."},
-      "Innovate": {syn: "create", ant: "imitate", def: "To introduce new methods or ideas", ex: "Companies must innovate to stay competitive."},
-      "Inquiry": {syn: "investigation", ant: "answer", def: "An act of asking for information", ex: "The police launched an inquiry into the incident."},
-      "Insight": {syn: "understanding", ant: "ignorance", def: "A deep understanding of something", ex: "The book offers insight into human nature."},
-      "Insinuate": {syn: "imply", ant: "state", def: "To suggest something bad indirectly", ex: "He insinuated that she was lying."},
-      "Insipid": {syn: "bland", ant: "flavorful", def: "Lacking flavor or interest", ex: "The soup was insipid and needed seasoning."},
-      "Insolent": {syn: "rude", ant: "respectful", def: "Showing a lack of respect; impertinent", ex: "The insolent child talked back to the teacher."},
-      "Integrity": {syn: "honesty", ant: "dishonesty", def: "The quality of being honest and moral", ex: "Her integrity is beyond question."},
-      "Intermission": {syn: "break", ant: "continuation", def: "A pause between parts of a performance", ex: "We got refreshments during the intermission."},
-      "Integrate": {syn: "combine", ant: "separate", def: "To combine into a whole", ex: "The school worked to integrate new students."},
-      "Intricate": {syn: "complex", ant: "simple", def: "Very complicated or detailed", ex: "The intricate design took months to complete."},
-      "Inundate": {syn: "overwhelm", ant: "underwhelm", def: "To flood; to overwhelm with things", ex: "We were inundated with requests."},
-      "Invoke": {syn: "summon", ant: "dismiss", def: "To call on for aid; to cite as authority", ex: "She invoked her right to remain silent."},
-      "Irate": {syn: "furious", ant: "calm", def: "Feeling or showing great anger", ex: "The irate customer demanded a refund."},
-      "Jaded": {syn: "weary", ant: "enthusiastic", def: "Tired and lacking enthusiasm", ex: "Years of touring left the musician jaded."},
-      "Jargon": {syn: "terminology", ant: "plain-speak", def: "Special words used by a profession", ex: "The technical jargon was confusing."},
-      "Jeer": {syn: "mock", ant: "applaud", def: "To make rude and mocking remarks", ex: "The crowd jeered at the losing team."},
-      "Jest": {syn: "joke", ant: "seriousness", def: "Something said or done for amusement", ex: "He said it in jest, not seriously."},
-      "Jubilant": {syn: "joyful", ant: "sorrowful", def: "Feeling great happiness and triumph", ex: "The jubilant fans celebrated the victory."},
-      "Justify": {syn: "defend", ant: "condemn", def: "To show to be right or reasonable", ex: "How do you justify such expenses?"},
-      "Keen": {syn: "eager", ant: "reluctant", def: "Having enthusiasm; sharp", ex: "She has a keen interest in history."},
-      "Kinetic": {syn: "moving", ant: "static", def: "Relating to or resulting from motion", ex: "The sculpture has kinetic elements."},
-      "Knoll": {syn: "hill", ant: "valley", def: "A small rounded hill", ex: "The house sat atop a grassy knoll."},
-      "Laudatory": {syn: "praising", ant: "critical", def: "Expressing praise and commendation", ex: "The review was laudatory and enthusiastic."},
-      "Lavish": {syn: "extravagant", ant: "modest", def: "Sumptuously rich or elaborate", ex: "They hosted a lavish wedding reception."},
-      "Legacy": {syn: "inheritance", ant: "forfeiture", def: "Something left by a predecessor", ex: "Her legacy of charitable work continues."},
-      "Lament": {syn: "mourn", ant: "celebrate", def: "To mourn or express sorrow", ex: "The poet lamented the loss of innocence."},
-      "Legend": {syn: "myth", ant: "fact", def: "A traditional story; a famous person", ex: "According to legend, he could fly."},
-      "Legitimate": {syn: "lawful", ant: "illegitimate", def: "Conforming to laws or rules; genuine", ex: "Is this a legitimate business?"},
-      "Lenient": {syn: "merciful", ant: "strict", def: "Not strict; merciful", ex: "The judge was lenient with first-time offenders."},
-      "Liberate": {syn: "free", ant: "imprison", def: "To set free", ex: "The soldiers liberated the prisoners."},
-      "Limber": {syn: "flexible", ant: "stiff", def: "Supple and flexible", ex: "Stretching keeps your muscles limber."},
-      "Linger": {syn: "remain", ant: "leave", def: "To stay longer than necessary", ex: "The smell of coffee lingered in the air."},
-      "Lofty": {syn: "high", ant: "low", def: "Of great height; noble", ex: "He had lofty ambitions."},
-      "Loquacious": {syn: "talkative", ant: "taciturn", def: "Tending to talk a great deal", ex: "My loquacious uncle never stops talking."},
-      "Lucrative": {syn: "profitable", ant: "unprofitable", def: "Producing much profit", ex: "The business proved very lucrative."},
-      "Luminous": {syn: "bright", ant: "dim", def: "Giving off light; bright", ex: "The luminous stars filled the sky."},
-      "Lure": {syn: "entice", ant: "repel", def: "To tempt with something desirable", ex: "The sale lured many shoppers."},
-      "Malicious": {syn: "spiteful", ant: "benevolent", def: "Intending to do harm", ex: "The malicious rumor spread quickly."},
-      "Meager": {syn: "scanty", ant: "abundant", def: "Lacking in quantity; thin", ex: "They survived on meager rations."},
-      "Meander": {syn: "wander", ant: "rush", def: "To follow a winding course", ex: "The river meanders through the valley."},
-      "Meddle": {syn: "interfere", ant: "abstain", def: "To interfere in others\' affairs", ex: "Don\'t meddle in my business."},
-      "Meek": {syn: "submissive", ant: "assertive", def: "Quiet, gentle, and easily imposed on", ex: "The meek employee never complained."},
-      "Menace": {syn: "threat", ant: "safety", def: "A threat or danger", ex: "Drunk driving is a menace to society."},
-      "Mentor": {syn: "guide", ant: "student", def: "An experienced adviser", ex: "She credited her mentor with her success."},
-      "Merge": {syn: "combine", ant: "separate", def: "To combine into one", ex: "The two companies will merge next year."},
-      "Meritorious": {syn: "praiseworthy", ant: "unworthy", def: "Deserving reward or praise", ex: "She received an award for meritorious service."},
-      "Meticulous": {syn: "careful", ant: "careless", def: "Showing great attention to detail", ex: "His meticulous work impressed everyone."},
-      "Mimic": {syn: "imitate", ant: "originate", def: "To copy the actions of another", ex: "Parrots can mimic human speech."},
-      "Mirage": {syn: "illusion", ant: "reality", def: "An optical illusion", ex: "The oasis was just a mirage."},
-      "Misery": {syn: "suffering", ant: "happiness", def: "A state of great unhappiness", ex: "The war caused widespread misery."},
-      "Model": {syn: "ideal", ant: "failure", def: "A standard of excellence; to display", ex: "She is a model of efficiency."},
-      "Modify": {syn: "alter", ant: "maintain", def: "To make partial changes to", ex: "We need to modify the design."},
-      "Molten": {syn: "melted", ant: "solid", def: "Liquefied by heat", ex: "Molten lava flowed down the volcano."},
-      "Moor": {syn: "heath", ant: "city", def: "An open area of uncultivated land; to secure a boat", ex: "They moored the boat at the dock."},
-      "Moral": {syn: "ethical", ant: "immoral", def: "Concerned with right and wrong", ex: "The story has a moral lesson."},
-      "Morose": {syn: "gloomy", ant: "cheerful", def: "Sullen and ill-tempered", ex: "He became morose after the breakup."},
-      "Muddled": {syn: "confused", ant: "clear", def: "In a state of confusion", ex: "His muddled thinking led to errors."},
-      "Mundane": {syn: "ordinary", ant: "extraordinary", def: "Lacking interest or excitement", ex: "She wanted to escape her mundane routine."},
-      "Mystify": {syn: "puzzle", ant: "clarify", def: "To bewilder or confuse", ex: "The magician\'s tricks mystified the audience."},
-      "Myth": {syn: "legend", ant: "fact", def: "A traditional story; a false belief", ex: "The idea that we only use 10% of our brain is a myth."},
-      "Nag": {syn: "pester", ant: "please", def: "To constantly find fault or urge", ex: "Stop nagging me about my homework."},
-      "Narcissism": {syn: "vanity", ant: "humility", def: "Excessive self-admiration", ex: "His narcissism alienated his friends."},
-      "Navigate": {syn: "steer", ant: "drift", def: "To plan and direct a route", ex: "She used GPS to navigate the city."},
-      "Negate": {syn: "nullify", ant: "confirm", def: "To make ineffective; to deny", ex: "New evidence negated his alibi."},
-      "Neglect": {syn: "ignore", ant: "attend", def: "To fail to care for properly", ex: "Don\'t neglect your health."},
-      "Noncommittal": {syn: "evasive", ant: "definite", def: "Not expressing an opinion", ex: "She gave a noncommittal response."},
-      "Nostalgic": {syn: "wistful", ant: "forward-looking", def: "Longing for the past", ex: "Old photos made her feel nostalgic."},
-      "Notorious": {syn: "infamous", ant: "unknown", def: "Famous for something bad", ex: "The notorious criminal was finally caught."},
-      "Novel": {syn: "new", ant: "old", def: "New and unusual; a long written story", ex: "She proposed a novel solution."},
-      "Novice": {syn: "beginner", ant: "expert", def: "A person new to a field", ex: "As a novice, he had much to learn."},
-      "Noxious": {syn: "harmful", ant: "harmless", def: "Harmful or poisonous", ex: "The factory emitted noxious fumes."},
-      "Null": {syn: "void", ant: "valid", def: "Having no legal force; zero", ex: "The contract was declared null and void."},
-      "Obfuscate": {syn: "confuse", ant: "clarify", def: "To make unclear or confusing", ex: "Legal jargon often obfuscates the meaning."},
-      "Obscure": {syn: "unclear", ant: "clear", def: "Not clearly expressed; unknown", ex: "The meaning of the poem is obscure."},
-      "Obstacle": {syn: "barrier", ant: "aid", def: "Something that blocks progress", ex: "Lack of funds was the main obstacle."},
-      "Obstinate": {syn: "stubborn", ant: "flexible", def: "Stubbornly refusing to change", ex: "The obstinate child wouldn\'t eat vegetables."},
-      "Obstruct": {syn: "block", ant: "clear", def: "To block or impede", ex: "Fallen trees obstructed the road."},
-      "Obtuse": {syn: "slow-witted", ant: "acute", def: "Slow to understand; not sharp", ex: "He was being deliberately obtuse."},
-      "Occupy": {syn: "inhabit", ant: "vacate", def: "To reside in; to fill", ex: "The army occupied the city."},
-      "Ominous": {syn: "threatening", ant: "promising", def: "Suggesting something bad will happen", ex: "Dark clouds gathered in an ominous way."},
-      "Omit": {syn: "exclude", ant: "include", def: "To leave out", ex: "Don\'t omit any important details."},
-      "Onerous": {syn: "burdensome", ant: "easy", def: "Involving heavy obligations", ex: "The onerous task took all day."},
-      "Opaque": {syn: "unclear", ant: "transparent", def: "Not transparent; hard to understand", ex: "The glass was opaque."},
-      "Opportune": {syn: "timely", ant: "inopportune", def: "Well-timed; favorable", ex: "She arrived at an opportune moment."},
-      "Optimistic": {syn: "hopeful", ant: "pessimistic", def: "Hopeful about the future", ex: "He remained optimistic despite setbacks."},
-      "Opulent": {syn: "luxurious", ant: "poor", def: "Ostentatiously rich and lavish", ex: "The opulent mansion had fifty rooms."},
-      "Ornery": {syn: "grumpy", ant: "pleasant", def: "Bad-tempered and stubborn", ex: "The ornery old man yelled at everyone."},
-      "Ostentatious": {syn: "showy", ant: "modest", def: "Designed to impress; pretentious", ex: "His ostentatious display of wealth was tasteless."},
-      "Overbearing": {syn: "domineering", ant: "meek", def: "Unpleasantly overpowering", ex: "Her overbearing mother controlled everything."},
-      "Overt": {syn: "open", ant: "covert", def: "Done openly; not concealed", ex: "There were no overt signs of hostility."},
-      "Pacify": {syn: "calm", ant: "agitate", def: "To bring peace to; to calm", ex: "The mother pacified the crying baby."},
-      "Pact": {syn: "agreement", ant: "disagreement", def: "A formal agreement", ex: "The nations signed a peace pact."},
-      "Palpable": {syn: "tangible", ant: "imperceptible", def: "Able to be touched or felt; obvious", ex: "The tension in the room was palpable."},
-      "Paltry": {syn: "meager", ant: "substantial", def: "Small and worthless", ex: "He received a paltry sum for his work."},
-      "Paradigm": {syn: "model", ant: "anomaly", def: "A typical example or pattern", ex: "The discovery created a new paradigm."},
-      "Parody": {syn: "satire", ant: "tribute", def: "A humorous imitation", ex: "The sketch was a parody of the news."},
-      "Parsimonious": {syn: "stingy", ant: "generous", def: "Extremely unwilling to spend money", ex: "The parsimonious man never tipped."},
-      "Particle": {syn: "speck", ant: "whole", def: "A tiny portion of matter", ex: "Dust particles floated in the air."},
-      "Partisan": {syn: "biased", ant: "neutral", def: "A strong supporter; prejudiced", ex: "Partisan politics divided the country."},
-      "Patron": {syn: "supporter", ant: "opponent", def: "A person who supports an organization", ex: "The patron donated generously to the arts."},
-      "Peak": {syn: "summit", ant: "bottom", def: "The highest point", ex: "We reached the peak at noon."},
-      "Pedestrian": {syn: "ordinary", ant: "exciting", def: "Lacking excitement; a person walking", ex: "The book had a pedestrian plot."},
-      "Permeate": {syn: "pervade", ant: "exit", def: "To spread throughout", ex: "The smell of coffee permeated the room."},
-      "Perpetuate": {syn: "continue", ant: "halt", def: "To make something continue indefinitely", ex: "We shouldn\'t perpetuate stereotypes."},
-      "Perplexed": {syn: "confused", ant: "certain", def: "Completely baffled", ex: "She looked perplexed by the question."},
-      "Persevere": {syn: "persist", ant: "quit", def: "To continue despite difficulty", ex: "If you persevere, you will succeed."},
-      "Persist": {syn: "continue", ant: "cease", def: "To continue firmly despite opposition", ex: "The rumors persist despite denials."},
-      "Perturb": {syn: "disturb", ant: "soothe", def: "To make anxious or unsettled", ex: "The news perturbed her greatly."},
-      "Plea": {syn: "appeal", ant: "demand", def: "An urgent request", ex: "He made a plea for mercy."},
-      "Plight": {syn: "predicament", ant: "fortune", def: "A dangerous or difficult situation", ex: "The documentary showed the refugees\' plight."},
-      "Pluck": {syn: "courage", ant: "cowardice", def: "Spirited courage; to pull off", ex: "It took pluck to stand up to them."},
-      "Plunder": {syn: "loot", ant: "give", def: "To steal using force", ex: "Pirates plundered the coastal towns."},
-      "Pompous": {syn: "arrogant", ant: "humble", def: "Self-important in a grand way", ex: "His pompous manner irritated everyone."},
-      "Porous": {syn: "permeable", ant: "impermeable", def: "Having tiny holes that allow passage", ex: "The porous rock absorbed water."},
-      "Pragmatic": {syn: "practical", ant: "idealistic", def: "Dealing with things realistically", ex: "We need a pragmatic approach."},
-      "Precipitate": {syn: "hasten", ant: "delay", def: "To cause to happen suddenly; hasty", ex: "The crisis precipitated his resignation."},
-      "Precise": {syn: "exact", ant: "vague", def: "Marked by exactness and accuracy", ex: "Give me the precise measurements."},
-      "Precocious": {syn: "advanced", ant: "backward", def: "Unusually advanced for one\'s age", ex: "The precocious child read at age three."},
-      "Predicament": {syn: "dilemma", ant: "solution", def: "A difficult situation", ex: "We found ourselves in a predicament."},
-      "Prediction": {syn: "forecast", ant: "hindsight", def: "A statement about future events", ex: "Her prediction came true."},
-      "Predominate": {syn: "dominate", ant: "yield", def: "To be the largest or most important", ex: "Oak trees predominate in this forest."},
-      "Prejudiced": {syn: "biased", ant: "impartial", def: "Having preconceived unfair opinions", ex: "The prejudiced jury was dismissed."},
-      "Presume": {syn: "assume", ant: "know", def: "To suppose without proof", ex: "I presume you\'ve met before."},
-      "Pretentious": {syn: "affected", ant: "genuine", def: "Attempting to impress with false importance", ex: "The restaurant was pretentious and overpriced."},
-      "Prevalent": {syn: "widespread", ant: "rare", def: "Common in a particular area or time", ex: "Flu is prevalent in winter."},
-      "Primary": {syn: "main", ant: "secondary", def: "Of chief importance", ex: "Safety is our primary concern."},
-      "Pristine": {syn: "immaculate", ant: "dirty", def: "In original condition; spotless", ex: "The pristine beach had no litter."},
-      "Prominent": {syn: "notable", ant: "obscure", def: "Important; projecting outward", ex: "Several prominent figures attended."},
-      "Prone": {syn: "inclined", ant: "averse", def: "Likely to do or suffer from", ex: "He is prone to making mistakes."},
-      "Prophesy": {syn: "predict", ant: "recall", def: "To say something will happen in the future", ex: "She claimed to prophesy the future."},
-      "Prototype": {syn: "original", ant: "copy", def: "A first model of something", ex: "Engineers tested the prototype."},
-      "Provoke": {syn: "incite", ant: "calm", def: "To stimulate a reaction; to anger", ex: "His words provoked an angry response."},
-      "Prudent": {syn: "sensible", ant: "reckless", def: "Acting with care for the future", ex: "It\'s prudent to save for retirement."},
-      "Pungent": {syn: "sharp", ant: "mild", def: "Having a strong taste or smell", ex: "The cheese had a pungent odor."},
-      "Puny": {syn: "weak", ant: "strong", def: "Small and weak", ex: "The puny plant needed more sun."},
-      "Puzzled": {syn: "confused", ant: "certain", def: "Unable to understand", ex: "He looked puzzled by her reaction."},
-      "Qualm": {syn: "doubt", ant: "confidence", def: "An uneasy feeling of doubt or worry", ex: "She had no qualms about asking."},
-      "Quiescent": {syn: "dormant", ant: "active", def: "In a state of inactivity", ex: "The volcano has been quiescent for years."},
-      "Ratify": {syn: "approve", ant: "reject", def: "To give formal consent to", ex: "Congress ratified the treaty."},
-      "Ravenous": {syn: "starving", ant: "satisfied", def: "Extremely hungry", ex: "After hiking, we were ravenous."},
-      "Raze": {syn: "demolish", ant: "build", def: "To completely destroy a building", ex: "The old factory was razed."},
-      "Recalcitrant": {syn: "defiant", ant: "obedient", def: "Stubbornly uncooperative", ex: "The recalcitrant student was expelled."},
-      "Reckless": {syn: "careless", ant: "cautious", def: "Acting without thought for consequences", ex: "His reckless driving caused the accident."},
-      "Refute": {syn: "disprove", ant: "confirm", def: "To prove wrong or false", ex: "Evidence refuted his claims."},
-      "Reject": {syn: "refuse", ant: "accept", def: "To dismiss as inadequate", ex: "They rejected the proposal."},
-      "Reluctant": {syn: "unwilling", ant: "eager", def: "Unwilling and hesitant", ex: "She was reluctant to speak."},
-      "Reminisce": {syn: "recall", ant: "forget", def: "To indulge in enjoyable recollection", ex: "They reminisced about old times."},
-      "Remote": {syn: "distant", ant: "near", def: "Far away from places or people", ex: "The village was in a remote area."},
-      "Rendezvous": {syn: "meeting", ant: "separation", def: "A meeting at an agreed time and place", ex: "They arranged a secret rendezvous."},
-      "Renounce": {syn: "reject", ant: "embrace", def: "To formally give up", ex: "He renounced his claim to the throne."},
-      "Renown": {syn: "fame", ant: "obscurity", def: "The state of being famous", ex: "The chef gained international renown."},
-      "Personify": {syn: "embody", ant: "abstract", def: "To represent a quality in human form", ex: "She personifies grace and elegance."},
-      "Pervasive": {syn: "widespread", ant: "limited", def: "Spreading widely throughout", ex: "The pervasive smell of smoke filled the air."},
-      "Pessimistic": {syn: "negative", ant: "optimistic", def: "Tending to see the worst", ex: "He was pessimistic about his chances."},
-      "Petty": {syn: "trivial", ant: "significant", def: "Of little importance; mean-spirited", ex: "Don\'t be petty about small things."},
-      "Pigment": {syn: "color", ant: "transparency", def: "A substance that gives color", ex: "Melanin is a natural pigment."},
-      "Pilfer": {syn: "steal", ant: "return", def: "To steal small items", ex: "Someone pilfered office supplies."},
-      "Pinnacle": {syn: "peak", ant: "nadir", def: "The highest point of achievement", ex: "Winning was the pinnacle of her career."},
-      "Pious": {syn: "devout", ant: "irreligious", def: "Deeply religious", ex: "The pious man prayed daily."},
-      "Placate": {syn: "calm", ant: "provoke", def: "To make someone less angry", ex: "She tried to placate the angry customer."},
-      "Plausible": {syn: "believable", ant: "implausible", def: "Seeming reasonable or probable", ex: "His excuse was barely plausible."},
-      "Remonstrate": {syn: "protest", ant: "agree", def: "To make a forceful protest", ex: "Workers remonstrated against the policy."},
-      "Remuneration": {syn: "payment", ant: "penalty", def: "Payment for work or services", ex: "The job offers excellent remuneration."},
-      "Reparation": {syn: "compensation", ant: "injury", def: "Making amends for a wrong", ex: "The company paid reparations."},
-      "Replete": {syn: "full", ant: "empty", def: "Filled with; well-supplied", ex: "The report was replete with errors."},
-      "Replenish": {syn: "refill", ant: "deplete", def: "To fill up again", ex: "We need to replenish supplies."},
-      "Replica": {syn: "copy", ant: "original", def: "An exact copy or model", ex: "The museum displays a replica."},
-      "Reprehensible": {syn: "shameful", ant: "admirable", def: "Deserving condemnation", ex: "His behavior was reprehensible."},
-      "Repress": {syn: "suppress", ant: "express", def: "To restrain or subdue", ex: "She repressed her anger."},
-      "Reprimand": {syn: "scold", ant: "praise", def: "To rebuke formally", ex: "He received a reprimand for lateness."},
-      "Reproach": {syn: "criticize", ant: "commend", def: "To express disapproval", ex: "She reproached him for his carelessness."},
-      "Repudiate": {syn: "reject", ant: "accept", def: "To refuse to accept or be associated with", ex: "He repudiated the allegations."},
-      "Repugnant": {syn: "disgusting", ant: "attractive", def: "Extremely distasteful", ex: "The idea was repugnant to her."},
-      "Reservations": {syn: "doubts", ant: "certainty", def: "Doubts or uncertainties", ex: "I have reservations about this plan."},
-      "Residual": {syn: "remaining", ant: "initial", def: "Remaining after the main part is gone", ex: "There was residual tension."},
-      "Resilience": {syn: "toughness", ant: "fragility", def: "The ability to recover from difficulties", ex: "Her resilience helped her succeed."},
-      "Restore": {syn: "renew", ant: "destroy", def: "To bring back to original condition", ex: "They restored the old building."},
-      "Resume": {syn: "continue", ant: "stop", def: "To begin again after a pause", ex: "We\'ll resume after lunch."},
-      "Reticent": {syn: "reserved", ant: "forthcoming", def: "Not revealing thoughts readily", ex: "He was reticent about his past."},
-      "Reveal": {syn: "disclose", ant: "conceal", def: "To make known", ex: "The investigation revealed the truth."},
-      "Revere": {syn: "respect", ant: "despise", def: "To feel deep respect for", ex: "The community reveres the elder."},
-      "Reverent": {syn: "respectful", ant: "disrespectful", def: "Showing deep respect", ex: "The crowd was reverent during the ceremony."},
-      "Robust": {syn: "strong", ant: "weak", def: "Strong and healthy; vigorous", ex: "The economy remains robust."},
-      "Rouse": {syn: "awaken", ant: "lull", def: "To wake up; to stir up emotions", ex: "The noise roused him from sleep."},
-      "Routine": {syn: "regular", ant: "unusual", def: "A regular way of doing things", ex: "Exercise is part of my daily routine."},
-      "Rue": {syn: "regret", ant: "celebrate", def: "To feel regret about", ex: "He will rue that decision."},
-      "Ruminate": {syn: "ponder", ant: "ignore", def: "To think deeply about something", ex: "She ruminated on the problem."},
-      "Ruse": {syn: "trick", ant: "honesty", def: "A deceptive stratagem", ex: "It was a ruse to get her attention."},
-      "Rustic": {syn: "rural", ant: "urban", def: "Relating to the countryside; simple", ex: "The cabin had rustic charm."},
-      "Ruthless": {syn: "merciless", ant: "merciful", def: "Having no compassion", ex: "The ruthless dictator silenced opposition."},
-      "Salvage": {syn: "rescue", ant: "abandon", def: "To save from loss or destruction", ex: "They salvaged what they could from the wreck."},
-      "Sate": {syn: "satisfy", ant: "starve", def: "To satisfy fully", ex: "The feast sated our hunger."},
-      "Satire": {syn: "mockery", ant: "tribute", def: "The use of humor to criticize", ex: "The show uses satire to comment on politics."},
-      "Savor": {syn: "enjoy", ant: "rush", def: "To enjoy completely", ex: "Savor each bite of the meal."},
-      "Sedate": {syn: "calm", ant: "lively", def: "Calm and dignified; to give sedatives", ex: "The doctor sedated the patient."},
-      "Scant": {syn: "minimal", ant: "ample", def: "Barely sufficient", ex: "There was scant evidence of a crime."},
-      "Scarce": {syn: "rare", ant: "abundant", def: "Insufficient for demand", ex: "Food was scarce during the famine."},
-      "Scorn": {syn: "contempt", ant: "admiration", def: "Feeling that something is worthless", ex: "She viewed the offer with scorn."},
-      "Seclude": {syn: "isolate", ant: "include", def: "To keep apart from others", ex: "He secluded himself in his room."},
-      "Seldom": {syn: "rarely", ant: "often", def: "Not often", ex: "She seldom watches television."},
-      "Sequence": {syn: "order", ant: "disorder", def: "A particular order of events", ex: "Follow the steps in sequence."},
-      "Shrewd": {syn: "astute", ant: "naive", def: "Having sharp judgment", ex: "The shrewd businessman negotiated well."},
-      "Simulate": {syn: "imitate", ant: "differ", def: "To imitate the appearance of", ex: "The program simulates real conditions."},
-      "Sincere": {syn: "genuine", ant: "insincere", def: "Free from pretense; honest", ex: "She gave a sincere apology."},
-      "Sinister": {syn: "evil", ant: "benign", def: "Giving an impression of evil", ex: "The building had a sinister appearance."},
-      "Solemn": {syn: "serious", ant: "frivolous", def: "Formal and dignified; serious", ex: "The occasion was solemn and respectful."},
-      "Solitary": {syn: "alone", ant: "accompanied", def: "Done alone; single", ex: "He lived a solitary life."},
-      "Somber": {syn: "gloomy", ant: "cheerful", def: "Dark and dull; serious", ex: "The news cast a somber mood."},
-      "Soothe": {syn: "calm", ant: "agitate", def: "To gently calm someone", ex: "Soft music soothed the baby."},
-      "Specific": {syn: "particular", ant: "general", def: "Clearly defined; precise", ex: "Give me specific details."},
-      "Sporadic": {syn: "occasional", ant: "constant", def: "Occurring at irregular intervals", ex: "There were sporadic outbreaks of violence."},
-      "Speck": {syn: "particle", ant: "mass", def: "A tiny spot or amount", ex: "There wasn\'t a speck of dust."},
-      "Spirited": {syn: "lively", ant: "listless", def: "Full of energy and courage", ex: "They gave a spirited performance."},
-      "Spontaneous": {syn: "unplanned", ant: "deliberate", def: "Occurring without planning", ex: "The applause was spontaneous."},
-      "Stagnate": {syn: "stall", ant: "progress", def: "To cease developing; become inactive", ex: "The economy began to stagnate."},
-      "Stature": {syn: "status", ant: "insignificance", def: "Importance or reputation; height", ex: "Her stature in the field grew."},
-      "Steadfast": {syn: "loyal", ant: "wavering", def: "Firmly loyal and unwavering", ex: "She remained steadfast in her beliefs."},
-      "Stoic": {syn: "unemotional", ant: "emotional", def: "Enduring pain without showing feelings", ex: "He remained stoic during the ordeal."},
-      "Stringent": {syn: "strict", ant: "lenient", def: "Strict and precisely defined", ex: "Stringent rules govern the process."},
-      "Subside": {syn: "diminish", ant: "intensify", def: "To become less intense", ex: "The storm began to subside."},
-      "Succinct": {syn: "brief", ant: "lengthy", def: "Briefly and clearly expressed", ex: "Give a succinct summary."},
-      "Sullied": {syn: "tarnished", ant: "pure", def: "Damaged or stained", ex: "His reputation was sullied by scandal."},
-      "Superb": {syn: "excellent", ant: "poor", def: "Of the highest quality", ex: "The meal was superb."},
-      "Superfluous": {syn: "unnecessary", ant: "essential", def: "More than what is needed", ex: "Remove any superfluous words."},
-      "Suppose": {syn: "assume", ant: "know", def: "To assume something is true", ex: "I suppose you\'re right."},
-      "Surrogate": {syn: "substitute", ant: "original", def: "A replacement for another", ex: "She acted as a surrogate mother."},
-      "Tangible": {syn: "concrete", ant: "abstract", def: "Able to be touched; real", ex: "We need tangible evidence."},
-      "Taper": {syn: "narrow", ant: "widen", def: "To gradually become thinner", ex: "The candle tapered to a point."},
-      "Task": {syn: "duty", ant: "leisure", def: "A piece of work to be done", ex: "Completing the report was my main task."},
-      "Taunt": {syn: "mock", ant: "compliment", def: "A remark to anger or provoke", ex: "The bully\'s taunts upset him."},
-      "Tenacious": {syn: "persistent", ant: "yielding", def: "Holding firmly; persistent", ex: "Her tenacious grip on the rope saved her."},
-      "Terse": {syn: "brief", ant: "wordy", def: "Sparing in words; abrupt", ex: "His terse reply ended the conversation."},
-      "Testify": {syn: "attest", ant: "deny", def: "To give evidence; to serve as proof", ex: "The data testifies to the program\'s success."},
-      "Thrive": {syn: "flourish", ant: "decline", def: "To grow or develop well", ex: "Plants thrive in sunlight."},
-      "Thwart": {syn: "prevent", ant: "assist", def: "To prevent from accomplishing something", ex: "Police thwarted the robbery attempt."},
-      "Timid": {syn: "shy", ant: "bold", def: "Showing lack of courage", ex: "The timid child hid behind his mother."},
-      "Tiresome": {syn: "tedious", ant: "engaging", def: "Causing weariness or boredom", ex: "The tiresome lecture put me to sleep."},
-      "Toil": {syn: "labor", ant: "rest", def: "To work extremely hard", ex: "Farmers toil in the fields."},
-      "Torment": {syn: "torture", ant: "comfort", def: "Severe suffering; to cause pain", ex: "Memories of the accident tormented him."},
-      "Totemic": {syn: "symbolic", ant: "literal", def: "Having symbolic significance", ex: "The eagle is a totemic symbol."},
-      "Tragedy": {syn: "disaster", ant: "triumph", def: "An event causing great suffering", ex: "The fire was a terrible tragedy."},
-      "Trifle": {syn: "triviality", ant: "importance", def: "Something of little value", ex: "Don\'t worry about such a trifle."},
-      "Trite": {syn: "clichéd", ant: "original", def: "Lacking originality; overused", ex: "The speech was full of trite phrases."},
-      "Tumult": {syn: "uproar", ant: "calm", def: "A loud confusion; disorder", ex: "The announcement caused a tumult."},
-      "Ultimate": {syn: "final", ant: "initial", def: "Being the last; the best possible", ex: "This is my ultimate goal."},
-      "Uncouth": {syn: "crude", ant: "refined", def: "Lacking good manners", ex: "His uncouth behavior embarrassed everyone."},
-      "Undermine": {syn: "weaken", ant: "strengthen", def: "To damage or weaken gradually", ex: "Rumors can undermine trust."},
-      "Underscore": {syn: "emphasize", ant: "minimize", def: "To emphasize or stress", ex: "The report underscores the need for action."},
-      "Unique": {syn: "singular", ant: "common", def: "Being the only one of its kind", ex: "Each snowflake is unique."},
-      "Unruly": {syn: "disorderly", ant: "obedient", def: "Difficult to control", ex: "The unruly crowd was dispersed."},
-      "Uproot": {syn: "displace", ant: "establish", def: "To pull up by the roots; to displace", ex: "The storm uprooted several trees."},
-      "Utilitarian": {syn: "practical", ant: "decorative", def: "Designed to be useful rather than attractive", ex: "The building had a utilitarian design."},
-      "Utilize": {syn: "use", ant: "waste", def: "To make practical use of", ex: "We should utilize all resources."},
-      "Vacillate": {syn: "waver", ant: "decide", def: "To alternate between opinions indecisively", ex: "She vacillated between the two choices."},
-      "Vend": {syn: "sell", ant: "buy", def: "To sell goods", ex: "Street vendors vend food to tourists."},
-      "Veneration": {syn: "reverence", ant: "contempt", def: "Great respect", ex: "The community holds the elder in veneration."},
-      "Vernacular": {syn: "dialect", ant: "formal", def: "The everyday language of ordinary people", ex: "The book was written in the local vernacular."},
-      "Versatile": {syn: "adaptable", ant: "limited", def: "Able to adapt to many functions", ex: "She is a versatile performer."},
-      "Vetted": {syn: "checked", ant: "ignored", def: "Thoroughly examined for suitability", ex: "All candidates were carefully vetted."},
-      "Vibrant": {syn: "lively", ant: "dull", def: "Full of energy and life", ex: "The market was vibrant with activity."},
-      "Viewpoint": {syn: "perspective", ant: "blindness", def: "A position from which something is considered", ex: "Consider different viewpoints."},
-      "Vigorous": {syn: "energetic", ant: "weak", def: "Strong, healthy, and full of energy", ex: "He maintains a vigorous exercise routine."},
-      "Vigilant": {syn: "watchful", ant: "careless", def: "Keeping careful watch", ex: "Security guards remained vigilant."},
-      "Vindication": {syn: "justification", ant: "accusation", def: "Proof that someone is right", ex: "The verdict was his vindication."},
-      "Vivacious": {syn: "lively", ant: "dull", def: "Attractively lively and animated", ex: "Her vivacious personality charmed everyone."},
-      "Vivid": {syn: "bright", ant: "dull", def: "Producing strong clear images", ex: "She gave a vivid description."},
-      "Voracious": {syn: "insatiable", ant: "moderate", def: "Having a huge appetite", ex: "He is a voracious reader."},
-      "Vow": {syn: "promise", ant: "denial", def: "A solemn promise", ex: "They exchanged wedding vows."},
-      "Voyage": {syn: "journey", ant: "stay", def: "A long journey by sea or space", ex: "The voyage lasted three months."},
-      "Vulnerable": {syn: "exposed", ant: "protected", def: "Susceptible to harm", ex: "Children are particularly vulnerable."},
-      "Wane": {syn: "decline", ant: "increase", def: "To decrease in strength or size", ex: "His influence began to wane."},
-      "Wax": {syn: "increase", ant: "wane", def: "To increase in size or intensity", ex: "The moon waxes and wanes."},
-      "Weary": {syn: "tired", ant: "energetic", def: "Feeling exhausted", ex: "The weary travelers rested."},
-      "Wily": {syn: "cunning", ant: "naive", def: "Skilled at gaining advantage by deceit", ex: "The wily fox escaped the trap."},
-      "Wrath": {syn: "fury", ant: "calm", def: "Extreme anger", ex: "He faced his father\'s wrath."},
-      "Writhe": {syn: "squirm", ant: "still", def: "To twist and turn in pain", ex: "He writhed in agony."},
-      "Zany": {syn: "eccentric", ant: "conventional", def: "Amusingly unconventional", ex: "The comedian\'s zany antics amused everyone."},
-      "Zealous": {syn: "passionate", ant: "apathetic", def: "Having great energy or enthusiasm", ex: "The zealous volunteers worked tirelessly."},
-      "Zeal": {syn: "enthusiasm", ant: "apathy", def: "Great energy in pursuit of a cause", ex: "She pursued her goals with zeal."},
-    };
-
-    let wordList = Object.keys(WORDS);
-    let allDefinitions = Object.values(WORDS).map(w => w.def);
-    let allSynonyms = Object.values(WORDS).map(w => w.syn);
-    let allAntonyms = Object.values(WORDS).map(w => w.ant);
-    let currentQuestionType = 'def'; // 'def', 'syn', or 'ant'
-    let score = 0;
-    let total = 0;
-    let currentWord = '';
-    let correctIndex = -1;
-    let answered = false;
-    let questionsPerRound = 10;
-    let hintUsedThisQuestion = false;
-    let highlightedOption = -1;
-    let focusMode = null; // null = all words, 'struggling' = only needs work
-    let questionModes = ['def', 'syn', 'ant']; // selected question types
-
-    // Spaced repetition: track weight for each word
-    // Higher weight = shown more often
-    const STORAGE_KEY = 'wordQuizWeights';
-    let wordWeights = loadWeights();
-
-    function loadWeights() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        return JSON.parse(saved);
-      }
-      // Initialize all words with weight 1
-      const weights = {};
-      wordList.forEach(word => weights[word] = 1);
-      return weights;
-    }
-
-    function saveWeights() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(wordWeights));
-    }
-
-    function pickWeightedWord() {
-      // Get word pool based on focus mode
-      let pool = getWordsByMode(focusMode);
-      if (pool.length === 0) pool = wordList; // fallback
-
-      // Calculate total weight
-      let totalWeight = 0;
-      pool.forEach(word => {
-        totalWeight += wordWeights[word] || 1;
-      });
-
-      // Pick random point in weight range
-      let random = Math.random() * totalWeight;
-      let cumulative = 0;
-
-      for (const word of pool) {
-        cumulative += wordWeights[word] || 1;
-        if (random <= cumulative) {
-          return word;
-        }
-      }
-      return pool[pool.length - 1];
-    }
-
-    function updateWeight(word, correct) {
-      if (correct) {
-        if (hintUsedThisQuestion) {
-          // Used hint: smaller decrease (word still needs practice)
-          wordWeights[word] = Math.max(0.3, (wordWeights[word] || 1) * 0.85);
-        } else {
-          // No hint: full decrease
-          wordWeights[word] = Math.max(0.1, (wordWeights[word] || 1) * 0.6);
-        }
-      } else {
-        // Increase weight significantly
-        wordWeights[word] = Math.min(10, (wordWeights[word] || 1) * 2);
-      }
-      saveWeights();
-    }
-
-    function resetProgress() {
-      wordList.forEach(word => wordWeights[word] = 1);
-      saveWeights();
-      updateStatsDisplay();
-    }
-
-    function getStats() {
-      let mastered = 0, learning = 0, struggling = 0;
-      wordList.forEach(word => {
-        const w = wordWeights[word] || 1;
-        if (w <= 0.4) mastered++;
-        else if (w >= 2) struggling++;
-        else learning++;
-      });
-      return { mastered, learning, struggling };
-    }
-
-    function getWordsByMode(mode) {
-      if (mode === 'learned') {
-        return wordList.filter(word => (wordWeights[word] || 1) <= 0.4);
-      } else if (mode === 'unlearned') {
-        return wordList.filter(word => (wordWeights[word] || 1) > 0.4);
-      } else if (mode === 'struggling') {
-        return wordList.filter(word => (wordWeights[word] || 1) >= 2);
-      }
-      return wordList;
-    }
-
-    function updateStatsDisplay() {
-      const stats = getStats();
-      const statsEl = document.getElementById('stats-display');
-      if (statsEl) {
-        statsEl.innerHTML = `
-          <div style="margin-bottom: 8px;">
-            <span class="stat-option ${focusMode === null ? 'active' : ''}" onclick="setFocusMode(null)">All (${wordList.length})</span>
-            <span class="stat-option ${focusMode === 'learned' ? 'active' : ''}" onclick="setFocusMode('learned')">Learned (${stats.mastered})</span>
-            <span class="stat-option ${focusMode === 'unlearned' ? 'active' : ''}" onclick="setFocusMode('unlearned')">Unlearned (${wordList.length - stats.mastered})</span>
-            <span class="stat-option ${focusMode === 'struggling' ? 'active' : ''}" onclick="setFocusMode('struggling')">Needs work (${stats.struggling})</span>
-          </div>
-          <div>
-            <span class="stat-option ${questionModes.includes('def') ? 'active' : ''}" onclick="toggleQuestionMode('def')">Definition</span>
-            <span class="stat-option ${questionModes.includes('syn') ? 'active' : ''}" onclick="toggleQuestionMode('syn')">Synonym</span>
-            <span class="stat-option ${questionModes.includes('ant') ? 'active' : ''}" onclick="toggleQuestionMode('ant')">Antonym</span>
-          </div>
-        `;
-      }
-    }
-
-    function setFocusMode(mode) {
-      const words = getWordsByMode(mode);
-      if (words.length === 0) {
-        alert('No words in this category!');
-        return;
-      }
-      focusMode = mode;
-      updateStatsDisplay();
-    }
-
-    function toggleQuestionMode(mode) {
-      if (questionModes.includes(mode)) {
-        if (questionModes.length > 1) {
-          questionModes = questionModes.filter(m => m !== mode);
-        }
-      } else {
-        questionModes.push(mode);
-      }
-      updateStatsDisplay();
-    }
-
-    function showHint() {
-      hintUsedThisQuestion = true;
-
-      const example = WORDS[currentWord].ex;
-      const hintDisplay = document.getElementById('hint-display');
-      // Highlight the word in the example
-      const wordClean = currentWord.replace(/\s*\(.*\)/, ''); // remove annotations like "(adjective)"
-      const regex = new RegExp(`(${wordClean})`, 'gi');
-      const highlightedExample = example.replace(regex, '<span class="highlight-word">$1</span>');
-      hintDisplay.innerHTML = `<div class="hint-label">Example:</div>"${highlightedExample}"`;
-      hintDisplay.classList.add('show');
-      document.getElementById('hint-btn').classList.add('hidden');
-    }
-
-    function hideHint() {
-      document.getElementById('hint-display').classList.remove('show');
-      document.getElementById('hint-btn').classList.remove('hidden');
-      hintUsedThisQuestion = false;
-      updateHintButton();
-    }
-
-    function updateHintButton() {
-      const btn = document.getElementById('hint-btn');
-      btn.textContent = 'Show Hint';
-      btn.disabled = false;
-      btn.classList.remove('disabled');
-    }
-
-    function shuffle(array) {
-      const arr = [...array];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    function startQuiz() {
-      questionsPerRound = parseInt(document.getElementById('num-questions').value);
-      score = 0;
-      total = 0;
-      updateScore();
+    // Screen management functions
+    function showInputScreen() {
+      document.getElementById('input-screen').style.display = 'block';
+      document.getElementById('loading-screen').style.display = 'none';
       document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('quiz-screen').style.display = 'none';
       document.getElementById('end-screen').style.display = 'none';
-      document.getElementById('quiz-screen').style.display = 'block';
-      nextQuestion();
+      document.getElementById('score-display').style.display = 'none';
+      document.getElementById('progress-bar').style.display = 'none';
     }
 
-    function updateScore() {
-      document.getElementById('score').textContent = score;
-      document.getElementById('total').textContent = total;
-      const pct = total > 0 ? (score / total) * 100 : 0;
-      document.getElementById('progress').style.width = pct + '%';
+    function showLoadingScreen() {
+      document.getElementById('input-screen').style.display = 'none';
+      document.getElementById('loading-screen').style.display = 'block';
+      document.getElementById('start-screen').style.display = 'none';
     }
 
-    function nextQuestion() {
-      if (total >= questionsPerRound) {
-        endQuiz();
+    function showStartScreen() {
+      document.getElementById('input-screen').style.display = 'none';
+      document.getElementById('loading-screen').style.display = 'none';
+      document.getElementById('start-screen').style.display = 'block';
+      document.getElementById('score-display').style.display = 'block';
+      document.getElementById('progress-bar').style.display = 'block';
+    }
+
+    // Parse word input
+    function parseWordInput(text) {
+      return text
+        .split('\n')
+        .map(w => w.trim())
+        .filter(w => w.length > 0)
+        .slice(0, CONFIG.MAX_WORDS);
+    }
+
+    // Update input hint with word count
+    function updateInputHint() {
+      const text = document.getElementById('word-input').value;
+      const words = parseWordInput(text);
+      const hint = document.getElementById('input-hint');
+      if (words.length === 0) {
+        hint.textContent = '';
+      } else if (words.length < CONFIG.MIN_WORDS) {
+        hint.textContent = `${words.length} words (need at least ${CONFIG.MIN_WORDS})`;
+        hint.style.color = '#ef4444';
+      } else {
+        hint.textContent = `${words.length} words`;
+        hint.style.color = '#888';
+      }
+    }
+
+    // Submit words and generate data
+    async function submitWords() {
+      const text = document.getElementById('word-input').value;
+      const words = parseWordInput(text);
+
+      if (words.length < CONFIG.MIN_WORDS) {
+        alert(`Please enter at least ${CONFIG.MIN_WORDS} words.`);
         return;
       }
 
-      answered = false;
-      highlightedOption = -1;
-      document.getElementById('feedback').classList.remove('show', 'correct', 'incorrect');
-      document.getElementById('next-btn').classList.remove('show');
-      hideHint();
+      showLoadingScreen();
+      document.getElementById('loading-status').textContent = 'Generating word data...';
 
-      // Pick word using weighted selection (spaced repetition)
-      currentWord = pickWeightedWord();
-
-      // Pick question type from selected modes
-      currentQuestionType = questionModes[Math.floor(Math.random() * questionModes.length)];
-
-      let correctAnswer, wrongAnswers, questionLabel;
-
-      if (currentQuestionType === 'def') {
-        correctAnswer = WORDS[currentWord].def;
-        wrongAnswers = allDefinitions.filter(d => d !== correctAnswer);
-        questionLabel = 'What does this word mean?';
-      } else if (currentQuestionType === 'syn') {
-        correctAnswer = WORDS[currentWord].syn;
-        wrongAnswers = allSynonyms.filter(s => s !== correctAnswer);
-        questionLabel = '🔵 SYNONYM';
-      } else {
-        correctAnswer = WORDS[currentWord].ant;
-        wrongAnswers = allAntonyms.filter(a => a !== correctAnswer);
-        questionLabel = '🔴 ANTONYM';
+      try {
+        const wordsData = await generateWordsData(words);
+        initializeGame(wordsData);
+        showStartScreen();
+      } catch (error) {
+        document.getElementById('loading-status').innerHTML =
+          `<span class="error-message">Error: ${error.message}</span>`;
+        setTimeout(showInputScreen, 3000);
       }
-
-      const shuffledWrong = shuffle(wrongAnswers).slice(0, 3);
-      let options = [correctAnswer, ...shuffledWrong];
-      options = shuffle(options);
-      correctIndex = options.indexOf(correctAnswer);
-
-      // Display
-      document.getElementById('word-label').textContent = questionLabel;
-      document.getElementById('current-word').textContent = currentWord.toLowerCase();
-
-      const optionsContainer = document.getElementById('options');
-      optionsContainer.innerHTML = '';
-
-      options.forEach((opt, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'option';
-        btn.textContent = opt;
-        btn.onclick = () => selectAnswer(i);
-        optionsContainer.appendChild(btn);
-      });
     }
 
-    function selectAnswer(index) {
-      if (answered) return;
-      answered = true;
-      total++;
-
-      const options = document.querySelectorAll('.option');
-      options.forEach(opt => opt.classList.add('disabled'));
-
-      const feedback = document.getElementById('feedback');
-
-      const wordInfo = WORDS[currentWord];
-      const isCorrect = index === correctIndex;
-      const wordClean = currentWord.replace(/\s*\(.*\)/, '');
-      const regex = new RegExp(`(${wordClean})`, 'gi');
-      const highlightedEx = wordInfo.ex.replace(regex, '<span class="highlight-word">$1</span>');
-      const wordDetails = `<div class="word-details ${isCorrect ? 'correct' : 'incorrect'}">
-        <div class="detail-row"><span class="detail-label">Meaning:</span> ${wordInfo.def}</div>
-        <div class="detail-row"><span class="detail-label">Example:</span> <span class="detail-example">"${highlightedEx}"</span></div>
-      </div>`;
-
-      if (isCorrect) {
-        score++;
-        options[index].classList.add('correct');
-        updateWeight(currentWord, true);
+    // Load previously saved words
+    function loadSavedWords() {
+      const data = loadData();
+      if (data && data.words && Object.keys(data.words).length > 0) {
+        WORDS = data.words;
+        wordWeights = data.weights || {};
+        wordList = Object.keys(WORDS);
+        allDefinitions = Object.values(WORDS).map(w => w.def);
+        allSynonyms = Object.values(WORDS).map(w => w.syn);
+        allAntonyms = Object.values(WORDS).map(w => w.ant);
+        initializeWeights();
+        updateStatsDisplay();
+        showStartScreen();
       } else {
-        options[index].classList.add('incorrect');
-        options[correctIndex].classList.add('correct');
-        updateWeight(currentWord, false);
+        alert('No saved words found. Please enter new words.');
       }
-      feedback.innerHTML = wordDetails;
-      updateStatsDisplay();
-
-      feedback.classList.add('show');
-      updateScore();
-      document.getElementById('next-btn').classList.add('show');
     }
 
-    function endQuiz() {
-      document.getElementById('quiz-screen').style.display = 'none';
-      document.getElementById('end-screen').style.display = 'block';
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('word-input').addEventListener('input', updateInputHint);
 
-      const pct = Math.round((score / total) * 100);
-      document.getElementById('final-score').textContent = `${score}/${total} (${pct}%)`;
-
-      let msg = '';
-      if (pct === 100) msg = 'Perfect score! Amazing!';
-      else if (pct >= 80) msg = 'Great job! Keep practicing!';
-      else if (pct >= 60) msg = 'Good effort! A bit more practice will help.';
-      else msg = 'Keep studying and try again!';
-
-      document.getElementById('end-message').textContent = msg;
-    }
-
-    // Initialize word count and stats display
-    document.getElementById('word-count').textContent = `${wordList.length} words loaded`;
-    updateStatsDisplay();
-
-    function updateHighlight() {
-      const options = document.querySelectorAll('.option');
-      options.forEach((opt, i) => {
-        if (i === highlightedOption) {
-          opt.classList.add('highlighted');
-        } else {
-          opt.classList.remove('highlighted');
-        }
-      });
-    }
-
-    document.addEventListener('keydown', function(e) {
-      const quizScreen = document.getElementById('quiz-screen');
-      if (quizScreen.style.display !== 'block') return;
-
-      const options = document.querySelectorAll('.option');
-
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 's' || e.key === 'S') {
-        e.preventDefault();
-        if (!answered) {
-          highlightedOption = (highlightedOption + 1) % 4;
-          updateHighlight();
-        }
-      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'w' || e.key === 'W') {
-        e.preventDefault();
-        if (!answered) {
-          highlightedOption = (highlightedOption - 1 + 4) % 4;
-          updateHighlight();
-        }
-      } else if (e.key === 'Enter' || e.key === 'f' || e.key === 'F') {
-        e.preventDefault();
-        if (answered) {
-          nextQuestion();
-        } else if (highlightedOption >= 0) {
-          selectAnswer(highlightedOption);
-        }
-      } else if (e.key >= '1' && e.key <= '4' && !answered) {
-        e.preventDefault();
-        const index = parseInt(e.key) - 1;
-        highlightedOption = index;
-        updateHighlight();
-        selectAnswer(index);
+      // Check for saved data
+      const data = loadData();
+      if (data && data.words && Object.keys(data.words).length > 0) {
+        // Auto-load saved words
+        loadSavedWords();
       }
     });
   </script>
