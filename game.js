@@ -328,6 +328,14 @@ document.addEventListener('keydown', function(e) {
   const quizScreen = document.getElementById('quiz-screen');
   if (!quizScreen || quizScreen.style.display !== 'block') return;
 
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('start-screen').style.display = 'block';
+    updateStatsDisplay();
+    return;
+  }
+
   const numOptions = CONFIG.OPTIONS_PER_QUESTION;
 
   if (e.key === 'ArrowDown') {
