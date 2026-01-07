@@ -22,7 +22,7 @@
       <textarea id="word-input" placeholder="Enter one word per line..." rows="10"></textarea>
       <p class="input-hint" id="input-hint"></p>
       <button class="start-btn" onclick="submitWords()">Generate Quiz</button>
-      <button class="reset-btn" onclick="loadSavedWords()">Load Previous Words</button>
+      <button class="reset-btn" id="cancel-btn" onclick="showStartScreen()">Cancel</button>
     </div>
 
     <div class="loading-screen" id="loading-screen" style="display: none;">
@@ -181,6 +181,9 @@
       if (data && data.words && Object.keys(data.words).length > 0) {
         // Auto-load saved words
         loadSavedWords();
+      } else {
+        // Hide cancel button if no saved words
+        document.getElementById('cancel-btn').style.display = 'none';
       }
     });
   </script>
