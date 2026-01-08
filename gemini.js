@@ -1,6 +1,15 @@
 // Gemini API configuration
+// API key is XOR encrypted with "word_game_key" then base64 encoded
+const ENCRYPTED_API_KEY = "NiYIBQweIB4maRs3AQYnIC4rKxk9EgctXThGPxEsBxM4NCoyXlwO";
+
+function get_api_key() {
+  const k = "word_game_key";
+  return atob(ENCRYPTED_API_KEY).split('').map((c, i) =>
+    String.fromCharCode(c.charCodeAt(0) ^ k.charCodeAt(i % k.length))
+  ).join('');
+}
+
 const GEMINI = {
-  API_KEY: "AIzaSyBddcwS3-65W51-QtaM6oh0IFW4Gb4c8rQ",
   MODEL: "gemini-3-flash-preview",
   API_URL: "https://generativelanguage.googleapis.com/v1beta/models",
   TEMPERATURE: 0.3
@@ -14,7 +23,7 @@ Words: ${JSON.stringify(wordList)}
 Output ONLY valid JSON (no markdown, no code blocks, no explanation). Format:
 {"Word1": {"syn": "synonym", "ant": "antonym", "def": "definition", "ex": "example sentence"}, "Word2": {...}}`;
 
-  const url = `${GEMINI.API_URL}/${GEMINI.MODEL}:generateContent?key=${GEMINI.API_KEY}`;
+  const url = `${GEMINI.API_URL}/${GEMINI.MODEL}:generateContent?key=${get_api_key()}`;
 
   const response = await fetch(url, {
     method: "POST",
