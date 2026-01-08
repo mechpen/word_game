@@ -1,9 +1,9 @@
 // Gemini API configuration
-// API key is XOR encrypted with "word_game_key" then base64 encoded
-const ENCRYPTED_API_KEY = "NiYIBQweIB4maRs3AQYnIC4rKxk9EgctXThGPxEsBxM4NCoyXlwO";
+// API key is XOR encrypted with "word_quiz_key" then base64 encoded
+const ENCRYPTED_API_KEY = "NiYIBQwINBo5aRs3AQYnIC4rPQ05DQctXThGPxEsBwUsMDUyXlwO";
 
 function get_api_key() {
-  const k = "word_game_key";
+  const k = "word_quiz_key";
   return atob(ENCRYPTED_API_KEY).split('').map((c, i) =>
     String.fromCharCode(c.charCodeAt(0) ^ k.charCodeAt(i % k.length))
   ).join('');
